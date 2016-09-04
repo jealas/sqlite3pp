@@ -36,6 +36,12 @@ namespace sqlitepp {
         public:
             constexpr constexpr_string() : str_data{} { }
 
+            constexpr constexpr_string(const char(&str)[Length + 1u]) : str_data{} {
+                for (auto i = 0u; i < Length; ++i) {
+                    str_data[i] = str[i];
+                }
+            }
+
             constexpr constexpr_string(const constexpr_string<Length> &str) : str_data{} {
                 for (auto i = 0u; i < Length; ++i) {
                     str_data[i] = str[i];

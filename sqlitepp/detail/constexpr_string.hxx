@@ -3,12 +3,10 @@
 #include <initializer_list>
 
 namespace {
-
-    template<std::size_t ... Sizes>
-    constexpr std::size_t sum() {
+    constexpr std::size_t sum(const std::initializer_list<std::size_t> sizes) {
         std::size_t sum = 0u;
 
-        for (auto size: {Sizes...}) {
+        for (auto size : sizes) {
             sum += size;
         }
 
@@ -57,7 +55,7 @@ namespace sqlitepp {
 
                 static_assert(sizeof...(Sizes) > 0u, "You must join at least one string.");
 
-                constexpr std::size_t NEW_STRING_LENGTH = sum<Sizes...>() + (Length * (sizeof...(Sizes) - 1u));
+                constexpr std::size_t NEW_STRING_LENGTH = sum(Sizes...) + (Length * (sizeof...(Sizes) - 1u));
                 constexpr_string<CharT, NEW_STRING_LENGTH> new_string{};
 
                 std::size_t index = 0u;

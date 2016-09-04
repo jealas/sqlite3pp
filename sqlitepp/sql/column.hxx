@@ -11,9 +11,7 @@ namespace sqlitepp {
         template<class T>
         struct column_base {
             constexpr auto get_name() const { return static_cast<const T *>(this)->get_name(); }
-
             constexpr sql::column_type get_type() const { return static_cast<const T *>(this)->get_type(); }
-
             constexpr operator T() const { return *static_cast<const T *>(this); }
         };
 

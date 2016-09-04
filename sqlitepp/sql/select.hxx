@@ -13,6 +13,8 @@ namespace sqlitepp {
 
         template <class T>
         struct select_base {
+            // TODO: Define this interface.
+            constexpr operator T() const { return *static_cast<const T *>(this); }
         };
 
         template <class Table, class ... ColumnTypes>

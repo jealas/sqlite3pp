@@ -10,30 +10,30 @@ namespace sqlitepp {
 
         // Date time literal expressions.
         struct current_time_expression : public expression_base<current_time_expression> {
-            auto get_str() const { return sql_strings::CURRENT_TIME; }
-            expression_type get_type() const { return expression_type::ANY; }
+            constexpr auto get_str() const { return sql_strings::CURRENT_TIME; }
+            constexpr expression_type get_type() const { return expression_type::ANY; }
         };
 
         constexpr current_time_expression CURRENT_TIME{};
 
         struct current_date_expression : public expression_base<current_date_expression> {
-            auto get_str() const { return sql_strings::CURRENT_DATE; }
-            expression_type get_type() const { return expression_type::ANY; }
+            constexpr auto get_str() const { return sql_strings::CURRENT_DATE; }
+            constexpr expression_type get_type() const { return expression_type::ANY; }
         };
 
         constexpr current_date_expression CURRENT_DATE{};
 
         struct current_timestamp_expression : public expression_base<current_timestamp_expression> {
-            auto get_str() const { return sql_strings::CURRENT_TIMESTAMP; }
-            expression_type get_type() const { return expression_type::ANY; }
+            constexpr auto get_str() const { return sql_strings::CURRENT_TIMESTAMP; }
+            constexpr expression_type get_type() const { return expression_type::ANY; }
         };
 
         constexpr current_timestamp_expression CURRENT_TIMESTAMP{};
 
         // Null literal expression.
         struct null_expression : public expression_base<null_expression> {
-            auto get_str() const { return sql_strings::NULL_STR; }
-            expression_type get_type() const { return expression_type::NULL_T; }
+            constexpr auto get_str() const { return sql_strings::NULL_STR; }
+            constexpr expression_type get_type() const { return expression_type::NULL_T; }
         };
 
         constexpr null_expression NULL_{};
@@ -45,8 +45,8 @@ namespace sqlitepp {
             constexpr integer_expression(const char(&integer_str)[IntegerStrLength + 1u], std::int64_t integer)
                     : integer_str{integer_str}, integer{integer} {}
 
-            auto get_str() const { return integer_str; }
-            expression_type get_type() const { return expression_type::INT; }
+            constexpr auto get_str() const { return integer_str; }
+            constexpr expression_type get_type() const { return expression_type::INT; }
 
         private:
             constexpr_string<IntegerStrLength> integer_str;
@@ -60,8 +60,8 @@ namespace sqlitepp {
             constexpr unsigned_integer_expression(const char(&unsigned_str)[UnsignedStrLength + 1u], std::uint64_t unsigned_integer)
                     : unsigned_integer_str{unsigned_str}, unsigned_integer{unsigned_integer} {}
 
-            auto get_str() const { return unsigned_integer_str; }
-            expression_type get_type() const { return expression_type::INT; }
+            constexpr auto get_str() const { return unsigned_integer_str; }
+            constexpr expression_type get_type() const { return expression_type::INT; }
 
         private:
             constexpr_string<UnsignedStrLength> unsigned_integer_str;
@@ -75,8 +75,8 @@ namespace sqlitepp {
             constexpr float_expression(const char(&float_str)[FloatStrLength + 1u], float float_value)
                 : float_str{float_str}, float_value{float_value} {}
 
-            auto get_str() const { return float_str; }
-            expression_type get_type() const { return expression_type::REAL; }
+            constexpr auto get_str() const { return float_str; }
+            constexpr expression_type get_type() const { return expression_type::REAL; }
 
         private:
             constexpr_string<FloatStrLength> float_str;
@@ -89,8 +89,8 @@ namespace sqlitepp {
             constexpr double_expression(const char(&double_str)[DoubleStrLength + 1u], double double_value)
                 : double_str{double_str}, double_value{double_value} {}
 
-            auto get_str() const { return double_str; }
-            expression_type get_type() const { return expression_type::REAL; }
+            constexpr auto get_str() const { return double_str; }
+            constexpr expression_type get_type() const { return expression_type::REAL; }
 
         private:
             constexpr_string<DoubleStrLength> double_str;
@@ -103,8 +103,8 @@ namespace sqlitepp {
         public:
             constexpr string_expression(const char(&str)[StrLength + 1u]) : str{str} {}
 
-        auto get_str() const { return str.join("'", "'"); }
-        expression_type get_type() const { return expression_type::TEXT; }
+            constexpr auto get_str() const { return str.join("'", "'"); }
+            constexpr expression_type get_type() const { return expression_type::TEXT; }
 
         private:
             constexpr_string<StrLength> str;

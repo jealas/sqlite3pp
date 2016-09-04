@@ -7,31 +7,31 @@ namespace sqlitepp {
     namespace sql {
 
         template <class T>
-        struct expression_base {
+        struct literal_expression_base {
             auto get_str() const { return static_cast<const T*>(this)->get_str(); }
         };
 
         // Date time literal expressions.
-        struct current_time_expression : public expression_base<current_time_expression> {
+        struct current_time_expression : public literal_expression_base<current_time_expression> {
             auto get_str() const { return sql_strings::CURRENT_TIME; }
         };
 
         constexpr current_time_expression CURRENT_TIME{};
 
-        struct current_date_expression : public expression_base<current_date_expression> {
+        struct current_date_expression : public literal_expression_base<current_date_expression> {
             auto get_str() const { return sql_strings::CURRENT_DATE; }
         };
 
         constexpr current_date_expression CURRENT_DATE{};
 
-        struct current_timestamp_expression : public expression_base<current_timestamp_expression> {
+        struct current_timestamp_expression : public literal_expression_base<current_timestamp_expression> {
             auto get_str() const { return sql_strings::CURRENT_TIMESTAMP; }
         };
 
         constexpr current_timestamp_expression CURRENT_TIMESTAMP{};
 
         // Null literal expression.
-        struct null_expression : public expression_base<null_expression> {
+        struct null_expression : public literal_expression_base<null_expression> {
             auto get_str() const { return sql_strings::NULL_STR; }
         };
 
@@ -39,7 +39,7 @@ namespace sqlitepp {
 
         // Integer literal expression.
         template <std::size_t IntegerStrLength>
-        class integer_expression : public expression_base<integer_expression<IntegerStrLength>> {
+        class integer_expression : public literal_expression_base<integer_expression<IntegerStrLength>> {
         public:
             constexpr integer_expression(const char(&integer_str)[IntegerStrLength + 1u], std::int64_t integer)
                     : integer_str{integer_str}, integer{integer} {}
@@ -53,7 +53,7 @@ namespace sqlitepp {
 
         // Unsigned literal expression.
         template <std::size_t UnsignedStrLength>
-        class unsigned_integer_expression : public expression_base<unsigned_integer_expression<UnsignedStrLength>> {
+        class unsigned_integer_expression : public literal_expression_base<unsigned_integer_expression<UnsignedStrLength>> {
         public:
             constexpr unsigned_integer_expression(const char(&unsigned_str)[UnsignedStrLength + 1u], std::uint64_t unsigned_integer)
                     : unsigned_integer_str{unsigned_str}, unsigned_integer{unsigned_integer} {}
@@ -67,7 +67,7 @@ namespace sqlitepp {
 
         // Float literal expressions.
         template <std::size_t FloatStrLength>
-        class float_expression : public expression_base<float_expression<FloatStrLength>> {
+        class float_expression : public literal_expression_base<float_expression<FloatStrLength>> {
         public:
             constexpr float_expression(const char(&float_str)[FloatStrLength + 1u], float float_value)
                 : float_str{float_str}, float_value{float_value} {}
@@ -80,7 +80,7 @@ namespace sqlitepp {
         };
 
         template <std::size_t DoubleStrLength>
-        class double_expression : public expression_base<double_expression<DoubleStrLength>> {
+        class double_expression : public literal_expression_base<double_expression<DoubleStrLength>> {
         public:
             constexpr double_expression(const char(&double_str)[DoubleStrLength + 1u], double double_value)
                 : double_str{double_str}, double_value{double_value} {}

@@ -5,7 +5,6 @@
 namespace sqlitepp {
     namespace sql {
 
-        // Literal expressions.
 
 
     }

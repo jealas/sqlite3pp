@@ -1,51 +1,52 @@
 #pragma once
 
 #include "sqlitepp/sql/sql_strings.hxx"
+#include "sqlitepp/sql/expression_base.hxx"
+#include "sqlitepp/sql/expression_type.hxx"
 
 
 namespace sqlitepp {
     namespace sql {
 
-        template <class T>
-        struct literal_expression_base {
-            auto get_str() const { return static_cast<const T*>(this)->get_str(); }
-            constexpr operator T() const { return *static_cast<const T*>(this); }
-        };
-
         // Date time literal expressions.
-        struct current_time_expression : public literal_expression_base<current_time_expression> {
+        struct current_time_expression : public expression_base<current_time_expression> {
             auto get_str() const { return sql_strings::CURRENT_TIME; }
+            expression_type get_type() const { return expression_type::ANY; }
         };
 
         constexpr current_time_expression CURRENT_TIME{};
 
-        struct current_date_expression : public literal_expression_base<current_date_expression> {
+        struct current_date_expression : public expression_base<current_date_expression> {
             auto get_str() const { return sql_strings::CURRENT_DATE; }
+            expression_type get_type() const { return expression_type::ANY; }
         };
 
         constexpr current_date_expression CURRENT_DATE{};
 
-        struct current_timestamp_expression : public literal_expression_base<current_timestamp_expression> {
+        struct current_timestamp_expression : public expression_base<current_timestamp_expression> {
             auto get_str() const { return sql_strings::CURRENT_TIMESTAMP; }
+            expression_type get_type() const { return expression_type::ANY; }
         };
 
         constexpr current_timestamp_expression CURRENT_TIMESTAMP{};
 
         // Null literal expression.
-        struct null_expression : public literal_expression_base<null_expression> {
+        struct null_expression : public expression_base<null_expression> {
             auto get_str() const { return sql_strings::NULL_STR; }
+            expression_type get_type() const { return expression_type::NULL_T; }
         };
 
         constexpr null_expression NULL_{};
 
         // Integer literal expression.
         template <std::size_t IntegerStrLength>
-        class integer_expression : public literal_expression_base<integer_expression<IntegerStrLength>> {
+        class integer_expression : public expression_base<integer_expression<IntegerStrLength>> {
         public:
             constexpr integer_expression(const char(&integer_str)[IntegerStrLength + 1u], std::int64_t integer)
                     : integer_str{integer_str}, integer{integer} {}
 
             auto get_str() const { return integer_str; }
+            expression_type get_type() const { return expression_type::INT; }
 
         private:
             constexpr_string<IntegerStrLength> integer_str;
@@ -54,12 +55,13 @@ namespace sqlitepp {
 
         // Unsigned literal expression.
         template <std::size_t UnsignedStrLength>
-        class unsigned_integer_expression : public literal_expression_base<unsigned_integer_expression<UnsignedStrLength>> {
+        class unsigned_integer_expression : public expression_base<unsigned_integer_expression<UnsignedStrLength>> {
         public:
             constexpr unsigned_integer_expression(const char(&unsigned_str)[UnsignedStrLength + 1u], std::uint64_t unsigned_integer)
                     : unsigned_integer_str{unsigned_str}, unsigned_integer{unsigned_integer} {}
 
             auto get_str() const { return unsigned_integer_str; }
+            expression_type get_type() const { return expression_type::INT; }
 
         private:
             constexpr_string<UnsignedStrLength> unsigned_integer_str;
@@ -68,12 +70,13 @@ namespace sqlitepp {
 
         // Float literal expressions.
         template <std::size_t FloatStrLength>
-        class float_expression : public literal_expression_base<float_expression<FloatStrLength>> {
+        class float_expression : public expression_base<float_expression<FloatStrLength>> {
         public:
             constexpr float_expression(const char(&float_str)[FloatStrLength + 1u], float float_value)
                 : float_str{float_str}, float_value{float_value} {}
 
             auto get_str() const { return float_str; }
+            expression_type get_type() const { return expression_type::REAL; }
 
         private:
             constexpr_string<FloatStrLength> float_str;
@@ -81,12 +84,13 @@ namespace sqlitepp {
         };
 
         template <std::size_t DoubleStrLength>
-        class double_expression : public literal_expression_base<double_expression<DoubleStrLength>> {
+        class double_expression : public expression_base<double_expression<DoubleStrLength>> {
         public:
             constexpr double_expression(const char(&double_str)[DoubleStrLength + 1u], double double_value)
                 : double_str{double_str}, double_value{double_value} {}
 
             auto get_str() const { return double_str; }
+            expression_type get_type() const { return expression_type::REAL; }
 
         private:
             constexpr_string<DoubleStrLength> double_str;
@@ -100,6 +104,7 @@ namespace sqlitepp {
             constexpr string_expression(const char(&str)[StrLength + 1u]) : str{str} {}
 
         auto get_str() const { return str.join("'", "'"); }
+        expression_type get_type() const { return expression_type::TEXT; }
 
         private:
             constexpr_string<StrLength> str;

@@ -28,7 +28,8 @@ namespace sqlitepp {
             constexpr auto &operator[](std::size_t i) { return *static_cast<T *>(this)[i]; }
             constexpr const auto &operator[](std::size_t i) const { return *static_cast<const T *>(this)[i]; }
             constexpr std::size_t length() const { return static_cast<const T *>(this)->length(); }
-            constexpr operator T() const { return *static_cast<const T *>(this); }
+            constexpr operator T&() { return *static_cast<T *>(this); }
+            constexpr operator const T&() const { return *static_cast<const T *>(this); }
         };
 
         template<std::size_t Length>
@@ -36,7 +37,7 @@ namespace sqlitepp {
         public:
             constexpr constexpr_string() : str_data{} { }
 
-            constexpr constexpr_string(const char(&str)[Length + 1u]) : str_data{} {
+            constexpr constexpr_string(const char (&str)[Length + 1u]) : str_data{} {
                 for (auto i = 0u; i < Length; ++i) {
                     str_data[i] = str[i];
                 }
@@ -106,7 +107,7 @@ namespace sqlitepp {
         };
 
         template<std::size_t Length>
-        constexpr constexpr_string<Length - 1u> make_constexpr_string(const char(&str)[Length]) {
+        constexpr constexpr_string<Length - 1u> make_constexpr_string(const char (&str)[Length]) {
             constexpr_string<Length - 1u> new_string{};
 
             for (auto i = 0u; i < Length - 1u; ++i) {

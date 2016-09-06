@@ -12,17 +12,20 @@ namespace sqlitepp {
         struct column_base {
             constexpr auto get_name() const { return static_cast<const T *>(this)->get_name(); }
             constexpr sql::column_type get_type() const { return static_cast<const T *>(this)->get_type(); }
-            constexpr operator T() const { return *static_cast<const T *>(this); }
+            constexpr operator T&() { return *static_cast<T *>(this); }
+            constexpr operator const T&() const { return *static_cast<const T *>(this); }
         };
 
-        template<class NameType>
-        class column_t : public column_base<column_t<NameType>> {
+        template<template <class> class MemberT, class NameType>
+        class column_t : public column_base<column_t<MemberT, NameType>> {
         public:
+            template <class T>
+            using member_t = MemberT<T>;
+
             explicit constexpr column_t(const detail::constexpr_string_base<NameType> &name,
                                         sql::column_type column_type) : name{name}, column_type{column_type} { }
 
             constexpr auto get_name() const { return name; }
-
             constexpr auto get_type() const { return column_type; }
 
         private:
@@ -30,11 +33,11 @@ namespace sqlitepp {
             const sql::column_type column_type;
         };
 
-        template<std::size_t NameLength>
+        template <template <class> class MemberT, std::size_t NameLength>
         constexpr auto column(const char (&name)[NameLength], sql::column_type column_type) {
             auto name_str = detail::make_constexpr_string(name);
 
-            return column_t<decltype(name_str)>(name_str, column_type);
+            return column_t<MemberT, decltype(name_str)>(name_str, column_type);
         }
 
     }

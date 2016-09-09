@@ -2,6 +2,9 @@
 
 #include <cstdint>
 
+#include "sqlitepp/sql/sql_strings.hxx"
+
+
 namespace sqlitepp {
     namespace sql {
 
@@ -10,14 +13,22 @@ namespace sqlitepp {
             BLOB,
             REAL,
             TEXT,
-            TEXT16
         };
 
-        constexpr auto INTEGER = column_type::INTEGER;
-        constexpr auto BLOB = column_type::BLOB;
-        constexpr auto REAL = column_type::REAL;
-        constexpr auto TEXT = column_type::TEXT;
-        constexpr auto TEXT16 = column_type::TEXT16;
+        template <column_type ColumnType>
+        constexpr auto get_column_type_str();
+
+        template <>
+        constexpr auto get_column_type_str<column_type::INTEGER>() { return sql_strings::INTEGER; };
+
+        template <>
+        constexpr auto get_column_type_str<column_type::BLOB>() { return sql_strings::BLOB; }
+
+        template <>
+        constexpr auto get_column_type_str<column_type::REAL>() { return sql_strings::REAL; }
+
+        template <>
+        constexpr auto get_column_type_str<column_type::TEXT>() { return sql_strings::TEXT; }
 
     }
 }

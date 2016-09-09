@@ -1,8 +1,11 @@
 #pragma once
 
+#include "sqlitepp/sql/column.hxx"
+
 namespace sqlitepp {
     namespace sql {
-        struct all_t {};
-        constexpr all_t all{};
+
+
+
     }
 }

@@ -7,10 +7,13 @@ namespace sqlitepp {
     namespace sqlite3 {
 
         template <class T>
-        struct sqlite3_columnset_handler_traits : public sqlite3_columnset_handler_traits<decltype(&T::operator())> {};
+        struct handler_traits;
 
-        template <class ReturnT, class ... Args>
-        struct sqlite3_columnset_handler_traits<ReturnT(Args...)> {
+        template <class T>
+        struct handler_traits : public handler_traits<decltype(&T::operator())> {};
+
+        template <class ClassT, class ReturnT, class... Args>
+        struct handler_traits<ReturnT(ClassT::*)(Args...) const> {
             static constexpr std::size_t arity = sizeof...(Args);
 
             using return_t = ReturnT;
@@ -20,7 +23,7 @@ namespace sqlitepp {
         };
 
         template <class ClassT, class ReturnT, class... Args>
-        struct sqlite3_columnset_handler_traits<ReturnT(ClassT::*)(Args...) const> {
+        struct handler_traits<ReturnT(ClassT::*)(Args...)> {
             static constexpr std::size_t arity = sizeof...(Args);
 
             using return_t = ReturnT;

@@ -7,6 +7,7 @@
 #include "sqlitepp/sql/column.hxx"
 #include "sqlitepp/sql/sql_strings.hxx"
 #include "sqlitepp/sql/column_set.hxx"
+#include "sqlitepp/sql/all.hxx"
 
 
 namespace sqlitepp {
@@ -28,6 +29,19 @@ namespace sqlitepp {
 
             constexpr auto get_name() const { return name; }
             constexpr auto get_columns() const { return columns; }
+
+            // Select
+            constexpr auto select() const;
+            constexpr auto select(all_t) const;
+
+            template <class ... ColumnTypes>
+            constexpr auto select(const column_base<ColumnTypes> & ... columns) const;
+
+            // Insert
+
+            // Update
+
+            // Join
 
         private:
             const TableNameT name;

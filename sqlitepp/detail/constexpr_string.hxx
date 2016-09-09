@@ -1,15 +1,17 @@
 #pragma once
 
 #include <initializer_list>
+#include <utility>
 
 #include "sqlitepp/detail/constexpr_string_view.hxx"
 
 
 namespace {
-    constexpr std::size_t sum(const std::initializer_list<std::size_t> sizes) {
+    template <std::size_t ... Sizes>
+    constexpr std::size_t sum() {
         std::size_t sum = 0u;
 
-        for (auto size : sizes) {
+        for (auto size : {Sizes...}) {
             sum += size;
         }
 
@@ -25,7 +27,6 @@ namespace sqlitepp {
         struct constexpr_string_base {
             constexpr auto begin() const { return static_cast<const T *>(this)->begin(); }
             constexpr auto end() const { return static_cast<const T *>(this)->end(); }
-            constexpr auto &operator[](std::size_t i) { return *static_cast<T *>(this)[i]; }
             constexpr const auto &operator[](std::size_t i) const { return *static_cast<const T *>(this)[i]; }
             constexpr std::size_t length() const { return static_cast<const T *>(this)->length(); }
             constexpr operator T&() { return *static_cast<T *>(this); }
@@ -34,26 +35,53 @@ namespace sqlitepp {
 
         template<std::size_t Length>
         class constexpr_string : public constexpr_string_base<constexpr_string<Length>> {
+
+            template <std::size_t ... Indexes>
+            constexpr constexpr_string(const char(&str)[Length + 1u], std::index_sequence<Indexes...>)
+                : str_data{str[Indexes]...} {}
+
+            template <std::size_t ... Indexes>
+            constexpr constexpr_string(const char(&str)[Length], std::index_sequence<Indexes...>)
+                : str_data{str[Indexes]...} {}
+
+            constexpr constexpr_string(const char(&str)[Length])
+                : constexpr_string{str, std::make_index_sequence<Length>()} {}
+
+            // For c_str function.
+            friend class constexpr_string<Length - 1u>;
+
         public:
-            constexpr constexpr_string() : str_data{} { }
+            constexpr constexpr_string(const char(&str)[Length + 1u])
+                : constexpr_string{str, std::make_index_sequence<Length>()} {
 
-            constexpr constexpr_string(const char (&str)[Length + 1u]) : str_data{} {
-                for (auto i = 0u; i < Length; ++i) {
-                    str_data[i] = str[i];
+                if (str[Length] != '\0') {
+                    throw std::runtime_error("Cannot initialize constexpr string with an array.");
                 }
+
             }
 
-            constexpr constexpr_string(const constexpr_string<Length> &str) : str_data{} {
-                for (auto i = 0u; i < Length; ++i) {
-                    str_data[i] = str[i];
-                }
-            }
+            constexpr constexpr_string(const constexpr_string<Length> &str)
+                : constexpr_string{str.str_data, std::make_index_sequence<Length>()} {}
 
             constexpr const char *begin() const { return str_data; }
             constexpr const char *end() const { return str_data + Length; }
 
-            constexpr char &operator[](std::size_t i) { return str_data[i]; }
             constexpr const char &operator[](std::size_t i) const { return str_data[i]; }
+
+            template <std::size_t OtherStringLength>
+            constexpr auto operator+(const constexpr_string<OtherStringLength> & other_str) {
+                constexpr_string<OtherStringLength + Length> new_str;
+
+                for (auto i = 0u; i < Length; ++i) {
+                    new_str[i] = str_data[i];
+                }
+
+                for (auto i = Length; i < Length + OtherStringLength; ++i) {
+                    new_str[i] = str_data[i];
+                }
+
+                return new_str;
+            }
 
             constexpr std::size_t length() const { return Length; }
 
@@ -62,12 +90,12 @@ namespace sqlitepp {
 
                 static_assert(sizeof...(Sizes) > 0u, "You must join at least one string.");
 
-                constexpr std::size_t NEW_STRING_LENGTH = sum(Sizes...) + (Length * (sizeof...(Sizes) - 1u));
-                constexpr_string<NEW_STRING_LENGTH> new_string{};
+                constexpr std::size_t NEW_STRING_LENGTH = sum<Sizes...>() + (Length * (sizeof...(Sizes) - 1u));
+                char new_string[NEW_STRING_LENGTH + 1u] = {'\0'};
 
                 std::size_t index = 0u;
 
-                auto all_strings = std::initializer_list<constexpr_string_view>{strings...};
+                auto all_strings = {strings...};
 
                 for (auto current_string = all_strings.begin(); current_string != all_strings.end(); ++current_string) {
                     for (auto c : *current_string) {
@@ -83,19 +111,17 @@ namespace sqlitepp {
                     }
                 }
 
-                return new_string;
+                return constexpr_string<NEW_STRING_LENGTH>{new_string};
             };
 
             constexpr auto c_str() const {
-                constexpr_string<Length + 1u> c_string;
+                char c_string[Length + 1u] = {'\0'};
 
                 for (auto i = 0u; i < Length; ++i) {
                     c_string[i] = str_data[i];
                 }
 
-                c_string[Length] = '\0';
-
-                return c_string;
+                return constexpr_string<Length + 1u>{c_string};
             }
 
             constexpr operator constexpr_string_view() {
@@ -107,14 +133,8 @@ namespace sqlitepp {
         };
 
         template<std::size_t Length>
-        constexpr constexpr_string<Length - 1u> make_constexpr_string(const char (&str)[Length]) {
-            constexpr_string<Length - 1u> new_string{};
-
-            for (auto i = 0u; i < Length - 1u; ++i) {
-                new_string[i] = str[i];
-            }
-
-            return new_string;
+        constexpr auto make_constexpr_string(const char (&str)[Length]) {
+            return constexpr_string<Length - 1u>{str};
         }
 
     }

@@ -27,8 +27,8 @@ namespace sqlitepp {
 
             explicit constexpr column_t(const detail::constexpr_string_base<NameType> &name) : name{name} { }
 
-            constexpr auto to_column_str() const { return name; }
-            constexpr auto to_create_column_str() const { return sql_strings::SPACE.join(name, get_column_type_str<ColumnType>()); }
+            constexpr auto to_column_str() const { return name.join(sql_strings::SINGLE_QUOTE, sql_strings::SINGLE_QUOTE); }
+            constexpr auto to_create_column_str() const { return sql_strings::SPACE.join(to_column_str(), get_column_type_str<ColumnType>()); }
 
             constexpr auto get_name() const { return name; }
             constexpr column_type get_type() const { return ColumnType; }

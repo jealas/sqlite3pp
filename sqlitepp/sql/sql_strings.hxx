@@ -16,6 +16,8 @@ namespace sqlitepp {
             static constexpr auto QUESTION_MARK = make_constexpr_string("?");
             static constexpr auto ASTERISK = make_constexpr_string("*");
             static constexpr auto DOT = make_constexpr_string(".");
+            static constexpr auto SINGLE_QUOTE = make_constexpr_string("'");
+            static constexpr auto DOUBLE_QUOTE = make_constexpr_string("\"");
 
             static constexpr auto SELECT = make_constexpr_string("SELECT");
             static constexpr auto FROM = make_constexpr_string("FROM");
@@ -36,6 +38,8 @@ namespace sqlitepp {
         constexpr decltype(sql_strings::QUESTION_MARK) sql_strings::QUESTION_MARK;
         constexpr decltype(sql_strings::ASTERISK) sql_strings::ASTERISK;
         constexpr decltype(sql_strings::DOT) sql_strings::DOT;
+        constexpr decltype(sql_strings::SINGLE_QUOTE) sql_strings::SINGLE_QUOTE;
+        constexpr decltype(sql_strings::DOUBLE_QUOTE) sql_strings::DOUBLE_QUOTE;
 
         constexpr decltype(sql_strings::SELECT) sql_strings::SELECT;
         constexpr decltype(sql_strings::FROM) sql_strings::FROM;

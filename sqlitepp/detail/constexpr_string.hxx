@@ -95,7 +95,7 @@ namespace sqlitepp {
 
                 std::size_t index = 0u;
 
-                auto all_strings = {strings...};
+                auto all_strings = {constexpr_string_view{strings}...};
 
                 for (auto current_string = all_strings.begin(); current_string != all_strings.end(); ++current_string) {
                     for (auto c : *current_string) {
@@ -124,7 +124,7 @@ namespace sqlitepp {
                 return constexpr_string<Length + 1u>{c_string};
             }
 
-            constexpr operator constexpr_string_view() {
+            constexpr operator constexpr_string_view() const {
                 return {&str_data[0], Length};
             }
 

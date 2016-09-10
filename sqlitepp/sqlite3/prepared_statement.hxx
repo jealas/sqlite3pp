@@ -4,13 +4,16 @@
 #include <sqlite3.h>
 
 #include "sqlitepp/sqlite3/error.hxx"
+#include "sqlitepp/sqlite3/connection.hxx"
+#include "sqlitepp/sql/str.hxx"
+#include "sqlitepp/sqlite3/expected.hxx"
 
 
 namespace sqlitepp {
     namespace sqlite3 {
 
         class prepared_statement;
-        prepared_statement make_prepared_statement();
+        auto make_prepared_statement(connection & conn, const sql::str &sql_str) -> expected<prepared_statement>;
 
         class prepared_statement {
         public:
@@ -23,7 +26,7 @@ namespace sqlitepp {
             error finalize();
 
             explicit operator bool() const { return prepared_statement_prt != nullptr; }
-            explicit operator const sqlite3_stmt *() const { return prepared_statement_prt; }
+            operator sqlite3_stmt *() { return prepared_statement_prt; }
 
         private:
             prepared_statement() : prepared_statement_prt{nullptr} {}
@@ -31,16 +34,14 @@ namespace sqlitepp {
             prepared_statement(sqlite3_stmt *prepared_statement_ptr)
                 : prepared_statement_prt{prepared_statement_ptr} {}
 
-            friend prepared_statement make_prepared_statement();
+            friend auto make_prepared_statement(connection & conn, const sql::str &sql_str) -> expected<prepared_statement>;
 
         private:
             sqlite3_stmt *prepared_statement_prt;
         };
 
         prepared_statement::~prepared_statement() {
-            if (prepared_statement_prt != nullptr) {
-                finalize();
-            }
+            finalize();
         }
 
         error prepared_statement::finalize() {
@@ -48,9 +49,6 @@ namespace sqlitepp {
             prepared_statement_prt = nullptr;
 
             return err;
-        }
-
-        prepared_statement make_prepared_statement() {
         }
 
     }

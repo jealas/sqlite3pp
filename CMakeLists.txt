@@ -13,6 +13,7 @@ set(SOURCE_FILES
 
         # sqlite3
         sqlitepp/sqlite3/prepared_statement.cxx
+        sqlitepp/sqlite3/connection.cxx
 )
 
 add_executable(sqlitepp ${SOURCE_FILES})

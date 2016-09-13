@@ -93,5 +93,16 @@ namespace sqlitepp {
             IOERR_CONVPATH = SQLITE_IOERR_CONVPATH
         };
 
+        bool is_io_error(error err);
+        bool is_locked_error(error err);
+        bool is_busy_error(error err);
+        bool is_cant_open_error(error err);
+        bool is_readonly_error(error err);
+        bool is_abort_error(error err);
+        bool is_constraint_error(error err);
+        bool is_notice_error(error err);
+        bool is_warning_error(error err);
+        bool is_auth_error(error err);
+        bool is_ok(error err);
     }
 }

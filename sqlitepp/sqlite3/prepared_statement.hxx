@@ -36,6 +36,7 @@ namespace sqlitepp {
                 : prepared_statement_prt{prepared_statement_ptr} {}
 
             friend auto make_prepared_statement(connection & conn, const sql::str &sql_str) -> expected<prepared_statement>;
+            friend auto make_prepared_statement_v1(connection & conn, const sql::str &sql_str) -> expected<prepared_statement>;
 
         private:
             sqlite3_stmt *prepared_statement_prt;

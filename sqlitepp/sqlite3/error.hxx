@@ -90,7 +90,9 @@ namespace sqlitepp {
             IOERR_DELETE_NOENT = SQLITE_IOERR_DELETE_NOENT,
             IOERR_MMAP = SQLITE_IOERR_MMAP,
             IOERR_GETTEMPPATH = SQLITE_IOERR_GETTEMPPATH,
-            IOERR_CONVPATH = SQLITE_IOERR_CONVPATH
+            IOERR_CONVPATH = SQLITE_IOERR_CONVPATH,
+            IOERR_VNODE = SQLITE_IOERR_VNODE,
+            IOERR_AUTH = SQLITE_IOERR_AUTH
         };
 
         bool is_io_error(error err);

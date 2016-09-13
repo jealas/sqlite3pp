@@ -9,3 +9,8 @@ set(SOURCE_FILES main.cpp)
 add_executable(sqlitepp ${SOURCE_FILES})
 
 set_property(TARGET sqlitepp PROPERTY CXX_STANDARD 14)
+
+add_subdirectory(tests)
+target_include_directories(sqlitepp_tests PUBLIC
+        Catch/single_include
+)

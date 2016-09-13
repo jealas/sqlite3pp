@@ -13,7 +13,8 @@ namespace sqlitepp {
     namespace sqlite3 {
 
         class prepared_statement;
-        auto make_prepared_statement(connection & conn, const sql::str &sql_str) -> expected<prepared_statement>;
+        auto make_prepared_statement(connection &conn, const sql::str &sql_str) -> expected<prepared_statement>;
+        auto make_prepared_statement_v1(connection &conn, const sql::str &sql_str) -> expected<prepared_statement>;
 
         class prepared_statement {
         public:

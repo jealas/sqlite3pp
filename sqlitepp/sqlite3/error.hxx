@@ -31,6 +31,7 @@ namespace sqlitepp {
             MISUSE = SQLITE_MISUSE,
             NOLFS = SQLITE_NOLFS,
             AUTH = SQLITE_AUTH,
+            AUTH_USER = SQLITE_AUTH_USER,
             FORMAT = SQLITE_FORMAT,
             RANGE = SQLITE_RANGE,
             NOTADB = SQLITE_NOTADB,
@@ -99,6 +100,7 @@ namespace sqlitepp {
         bool is_locked_error(error err);
         bool is_busy_error(error err);
         bool is_cant_open_error(error err);
+        bool is_corrupt_error(error err);
         bool is_readonly_error(error err);
         bool is_abort_error(error err);
         bool is_constraint_error(error err);

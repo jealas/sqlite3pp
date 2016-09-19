@@ -11,6 +11,7 @@ set(SQLITEPP_SOURCE_FILES
         sqlitepp/sqlite3/prepared_statement.cxx
         sqlitepp/sqlite3/connection.cxx
         sqlitepp/sqlite3/error.cxx
+        sqlitepp/sqlite3/progress_handler.cxx
 )
 add_library(sqlitepp ${SQLITEPP_SOURCE_FILES})
 target_link_libraries(sqlitepp

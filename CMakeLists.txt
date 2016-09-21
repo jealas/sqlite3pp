@@ -9,7 +9,7 @@ set(SQLITE3PP_SOURCE_FILES
         src/sqlite3/progress_handler.cxx
 )
 
-add_library(sqlite3pp ${SQLITE3PP_SOURCE_FILES})
+add_library(sqlite3pp SHARED ${SQLITE3PP_SOURCE_FILES})
 
 target_link_libraries(sqlite3pp
         sqlite3

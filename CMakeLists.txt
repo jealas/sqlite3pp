@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 project(sqlite3pp CXX)
 
 set(SQLITE3PP_SOURCE_FILES
-        # sqlite3pp
-        include/sqlite3pp/sql/sql_strings.hxx
-
         # sqlite3
         src/sqlite3/prepared_statement.cxx
         src/sqlite3/connection.cxx

@@ -7,6 +7,7 @@
 
 
 namespace {
+
     template <std::size_t ... Sizes>
     constexpr std::size_t sum() {
         std::size_t sum = 0u;

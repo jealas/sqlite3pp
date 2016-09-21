@@ -1,10 +1,10 @@
-#include "catch.hpp"
+#include <catch.hpp>
 
-#include "sqlitepp/sqlite3/error.hxx"
+#include "sqlite3pp/sqlite3/error.hxx"
 
 
 namespace {
-    using namespace sqlitepp::sqlite3;
+    using namespace sqlite3pp::sqlite3;
 }
 
 // IOERR tests

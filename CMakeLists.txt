@@ -1,29 +1,27 @@
 cmake_minimum_required(VERSION 3.5)
-project(sqlitepp)
+project(sqlite3pp CXX)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-
-set(SQLITEPP_SOURCE_FILES
-        #sqlitepp
-        sqlitepp/sql/sql_strings.hxx
+set(SQLITE3PP_SOURCE_FILES
+        # sqlite3pp
+        include/sqlite3pp/sql/sql_strings.hxx
 
         # sqlite3
-        sqlitepp/sqlite3/prepared_statement.cxx
-        sqlitepp/sqlite3/connection.cxx
-        sqlitepp/sqlite3/error.cxx
-        sqlitepp/sqlite3/progress_handler.cxx
+        src/sqlite3/prepared_statement.cxx
+        src/sqlite3/connection.cxx
+        src/sqlite3/error.cxx
+        src/sqlite3/progress_handler.cxx
 )
-add_library(sqlitepp ${SQLITEPP_SOURCE_FILES})
-target_link_libraries(sqlitepp
+
+add_library(sqlite3pp ${SQLITE3PP_SOURCE_FILES})
+
+target_link_libraries(sqlite3pp
         sqlite3
 )
-set_property(TARGET sqlitepp PROPERTY CXX_STANDARD 14)
-target_include_directories(sqlitepp PUBLIC
-        ${CMAKE_SOURCE_DIR}  # TODO: Change this to the include directory once that refactoring is done.
+
+set_property(TARGET sqlite3pp PROPERTY CXX_STANDARD 14)
+
+target_include_directories(sqlite3pp PUBLIC
+        ${CMAKE_SOURCE_DIR}/include
 )
 
 add_subdirectory(tests)
-target_include_directories(sqlitepp_tests PUBLIC
-        Catch/single_include
-)
-set_property(TARGET sqlitepp_tests PROPERTY CXX_STANDARD 14)

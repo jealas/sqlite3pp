@@ -4,10 +4,10 @@
 #include <utility>
 #include <initializer_list>
 
-#include "column.hxx"
-#include "sql_strings.hxx"
-#include "column_set.hxx"
-#include "all.hxx"
+#include "sqlite3pp/sql/column.hxx"
+#include "sqlite3pp/sql/sql_strings.hxx"
+#include "sqlite3pp/sql/column_set.hxx"
+#include "sqlite3pp/sql/all.hxx"
 
 
 namespace sqlite3pp {

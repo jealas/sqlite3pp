@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <utility>
 
-#include "error.hxx"
+#include "sqlite3pp/sqlite3/error.hxx"
 
 
 namespace sqlite3pp {

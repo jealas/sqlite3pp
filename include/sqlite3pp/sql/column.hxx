@@ -2,8 +2,9 @@
 
 #include <type_traits>
 
-#include "column_type.hxx"
 #include "sqlite3pp/detail/constexpr_string.hxx"
+#include "sqlite3pp/sql/column_type.hxx"
+
 
 namespace sqlite3pp {
     namespace sql {

@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "sql_strings.hxx"
+#include "sqlite3pp/sql/sql_strings.hxx"
 
 
 namespace sqlite3pp {

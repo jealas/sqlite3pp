@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sql_strings.hxx"
-#include "expression_base.hxx"
-#include "expression_type.hxx"
+#include "sqlite3pp/sql/sql_strings.hxx"
+#include "sqlite3pp/sql/expression_base.hxx"
+#include "sqlite3pp/sql/expression_type.hxx"
 
 
 namespace sqlite3pp {

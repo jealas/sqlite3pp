@@ -3,7 +3,7 @@
 #include <initializer_list>
 #include <utility>
 
-#include "constexpr_string_view.hxx"
+#include "sqlite3pp/detail/constexpr_string_view.hxx"
 
 
 namespace {

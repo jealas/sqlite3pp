@@ -2,8 +2,8 @@
 
 #include <sqlite3.h>
 
-#include "expected.hxx"
-#include "error.hxx"
+#include "sqlite3pp/sqlite3/expected.hxx"
+#include "sqlite3pp/sqlite3/error.hxx"
 
 
 namespace sqlite3pp {

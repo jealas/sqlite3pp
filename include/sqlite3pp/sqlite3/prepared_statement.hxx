@@ -5,8 +5,8 @@
 
 #include "sqlite3pp/sqlite3/error.hxx"
 #include "sqlite3pp/sqlite3/connection.hxx"
-#include "sqlite3pp/sql/str.hxx"
 #include "sqlite3pp/sqlite3/expected.hxx"
+#include "sqlite3pp/sql/str.hxx"
 
 
 namespace sqlite3pp {

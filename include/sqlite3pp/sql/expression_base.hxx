@@ -1,6 +1,6 @@
 #pragma once
 
-#include "expression_type.hxx"
+#include "sqlite3pp/sql/expression_type.hxx"
 
 
 namespace sqlite3pp {

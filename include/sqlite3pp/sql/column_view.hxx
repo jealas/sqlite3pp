@@ -2,6 +2,7 @@
 
 #include "sqlite3pp/detail/constexpr_string.hxx"
 
+
 namespace sqlite3pp {
     namespace sql {
 

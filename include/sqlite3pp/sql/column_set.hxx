@@ -1,6 +1,6 @@
 #pragma once
 
-#include "column_view.hxx"
+#include "sqlite3pp/sql/column_view.hxx"
 
 
 namespace sqlite3pp {

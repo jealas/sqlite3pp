@@ -114,8 +114,8 @@ namespace sqlitepp {
 }
 
 // Helper macros for expressions.
-#define I(i) ::sqlitepp::sql::integer_expression<sizeof(#i) - 1u>(#i, i)
-#define U(u) ::sqlitepp::sql::unsigned_integer_expression<sizeof(#u) - 1u>(#u, u)
-#define F(f) ::sqlitepp::sql::float_expression<sizeof(#f) - 1u>(#f, f)
-#define D(d) ::sqlitepp::sql::double_expression<sizeof(#d) - 1u>(#d, d)
-#define S(s) ::sqlitepp::sql::string_expression<sizeof(s) - 1u>(s)
+#define I(i) (::sqlitepp::sql::integer_expression<sizeof(#i) - 1u>(#i, i))
+#define U(u) (::sqlitepp::sql::unsigned_integer_expression<sizeof(#u) - 1u>(#u, u))
+#define F(f) (::sqlitepp::sql::float_expression<sizeof(#f) - 1u>(#f, f))
+#define D(d) (::sqlitepp::sql::double_expression<sizeof(#d) - 1u>(#d, d))
+#define S(s) (::sqlitepp::sql::string_expression<sizeof(s) - 1u>(s))

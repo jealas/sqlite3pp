@@ -1,6 +1,12 @@
 add_executable(sqlite3pp_tests
         sqlite3pp_tests_main.cxx
+
+        # sqlite3pp
         test_sqlite3_error.cxx
+
+        # sql
+        test_sql_column.cxx
+        test_sql_expressions.cxx
 )
 
 target_link_libraries(sqlite3pp_tests

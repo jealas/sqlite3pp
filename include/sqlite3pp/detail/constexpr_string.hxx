@@ -2,6 +2,7 @@
 
 #include <initializer_list>
 #include <utility>
+#include <stdexcept>
 
 #include "sqlite3pp/detail/constexpr_string_view.hxx"
 
@@ -28,7 +29,7 @@ namespace sqlite3pp {
         struct constexpr_string_base {
             constexpr auto begin() const { return static_cast<const T *>(this)->begin(); }
             constexpr auto end() const { return static_cast<const T *>(this)->end(); }
-            constexpr const auto &operator[](std::size_t i) const { return *static_cast<const T *>(this)[i]; }
+            constexpr const char &operator[](std::size_t i) const { return *static_cast<const T *>(this)[i]; }
             constexpr std::size_t length() const { return static_cast<const T *>(this)->length(); }
             constexpr operator T&() { return *static_cast<T *>(this); }
             constexpr operator const T&() const { return *static_cast<const T *>(this); }
@@ -68,21 +69,6 @@ namespace sqlite3pp {
             constexpr const char *end() const { return str_data + Length; }
 
             constexpr const char &operator[](std::size_t i) const { return str_data[i]; }
-
-            template <std::size_t OtherStringLength>
-            constexpr auto operator+(const constexpr_string<OtherStringLength> & other_str) {
-                constexpr_string<OtherStringLength + Length> new_str;
-
-                for (auto i = 0u; i < Length; ++i) {
-                    new_str[i] = str_data[i];
-                }
-
-                for (auto i = Length; i < Length + OtherStringLength; ++i) {
-                    new_str[i] = str_data[i];
-                }
-
-                return new_str;
-            }
 
             constexpr std::size_t length() const { return Length; }
 
@@ -132,6 +118,24 @@ namespace sqlite3pp {
         private:
             char str_data[Length];
         };
+
+        template <std::size_t ... Sizes>
+        constexpr auto join_constexpr_strings(const constexpr_string<Sizes> & ... strings) {
+                static_assert(sizeof...(Sizes) >= 2u, "You must join at least two strings.");
+
+                constexpr std::size_t NEW_STRING_LENGTH = sum<Sizes...>();
+                char new_string[NEW_STRING_LENGTH + 1u] = {'\0'};
+
+                std::size_t index = 0u;
+
+                for (const auto &current_string : {constexpr_string_view{strings}...}) {
+                    for (auto c : current_string) {
+                        new_string[index++] = c;
+                    }
+                }
+
+                return constexpr_string<NEW_STRING_LENGTH>{new_string};
+        }
 
         template<std::size_t Length>
         constexpr auto make_constexpr_string(const char (&str)[Length]) {

@@ -4,16 +4,14 @@
 
 #include "sqlite3pp/detail/constexpr_string.hxx"
 #include "sqlite3pp/sql/column_type.hxx"
+#include "sqlite3pp/sql/serializable.hxx"
 
 
 namespace sqlite3pp {
     namespace sql {
 
         template<class T>
-        struct column_base {
-            constexpr auto to_column_str() const { return static_cast<const T *>(this)->to_column_str(); }
-            constexpr auto to_create_column_str() const { return static_cast<const T *>(this)->to_create_column_str(); }
-
+        struct column_base : public serializable<T> {
             constexpr auto get_name() const { return static_cast<const T *>(this)->get_name(); }
             constexpr column_type get_type() const { return static_cast<const T *>(this)->get_type(); }
             constexpr operator T&() { return *static_cast<T *>(this); }
@@ -28,8 +26,7 @@ namespace sqlite3pp {
 
             explicit constexpr column_t(const detail::constexpr_string_base<NameType> &name) : name{name} { }
 
-            constexpr auto to_column_str() const { return name.join(sql_strings::SINGLE_QUOTE, sql_strings::SINGLE_QUOTE); }
-            constexpr auto to_create_column_str() const { return sql_strings::SPACE.join(to_column_str(), get_column_type_str<ColumnType>()); }
+            constexpr auto to_str() const { return name; }
 
             constexpr auto get_name() const { return name; }
             constexpr column_type get_type() const { return ColumnType; }
@@ -42,7 +39,7 @@ namespace sqlite3pp {
         constexpr auto column(const char (&name)[NameLength]) {
             auto name_str = detail::make_constexpr_string(name);
 
-            return column_t<MemberT, ColumnType, decltype(name_str)>{name_str,};
+            return column_t<MemberT, ColumnType, decltype(name_str)>{name_str};
         }
 
     }

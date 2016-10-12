@@ -220,8 +220,7 @@ TEST_CASE("Literal expressions can be used with the != operator.", "[test-sql-ex
 }
 
 TEST_CASE("Columns can be used with the ~ operator.", "[test-sql-expressions]") {
-    constexpr auto unary_expression = ~age_column;
-    constexpr auto expression_str = unary_expression.to_str();
+    constexpr auto expression_str = (~age_column).to_str();
 
     REQUIRE(std::equal(expression_str.begin(), expression_str.end(), "~age"));
 }
@@ -284,4 +283,16 @@ TEST_CASE("NOTNULL construct can be used with columns.", "[test-sql-expressions]
     constexpr auto column_notnull_str = age_column.NOTNULL().to_str();
 
     REQUIRE(std::equal(column_notnull_str.begin(), column_notnull_str.end(), "age NOTNULL"));
+}
+
+TEST_CASE("Bind parameters can be used with IS.NOT expressions.", "[test-sql-expressions]") {
+    constexpr auto is_not_bind_str = name_column.IS.NOT(_).to_str();
+
+    REQUIRE(std::equal(is_not_bind_str.begin(), is_not_bind_str.end(), "name IS NOT ?"));
+}
+
+TEST_CASE("Bind parameters can be used as expressions with the IS.NOT construct.", "[test-sql-expressions]") {
+    constexpr auto bind_parameter_is_not_str = _.IS.NOT(NIL).to_str();
+
+    REQUIRE(std::equal(bind_parameter_is_not_str.begin(), bind_parameter_is_not_str.end(), "? IS NOT NULL"));
 }

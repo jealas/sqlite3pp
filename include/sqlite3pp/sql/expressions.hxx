@@ -105,51 +105,51 @@ namespace sqlite3pp {
         template <class LeftExpressionT, class JoinStringT, class RightExpressionT>
         class binary_expression : public expression<binary_expression<LeftExpressionT, JoinStringT, RightExpressionT>> {
         public:
-            constexpr binary_expression(const serializable<LeftExpressionT> &left_serializable,
+            constexpr binary_expression(const expression<LeftExpressionT> &left_expression,
                     const JoinStringT &join_string,
-                    const serializable<RightExpressionT> &right_serializable)
+                    const expression<RightExpressionT> &right_expression)
 
-                : left_serializable{left_serializable},
+                : left_expression{left_expression},
                   join_string{join_string},
-                  right_serializable{right_serializable} {}
+                  right_expression{right_expression} {}
 
-            constexpr auto to_str() const { return join_string.join(left_serializable.to_str(), right_serializable.to_str()); }
+            constexpr auto to_str() const { return join_string.join(left_expression.to_str(), right_expression.to_str()); }
 
         private:
-            LeftExpressionT left_serializable;
+            LeftExpressionT left_expression;
             JoinStringT join_string;
-            RightExpressionT right_serializable;
+            RightExpressionT right_expression;
         };
 
-        template <class SerializableT>
-        class parenthesis_expression_serializable : public serializable<parenthesis_expression_serializable<SerializableT>> {
+        template <class ExpressionT>
+        class parenthesis_expression : public expression<parenthesis_expression<ExpressionT>> {
         public:
-            constexpr parenthesis_expression_serializable(const serializable<SerializableT> &serializable_value)
-                    : serializable_value{serializable_value} {}
+            constexpr parenthesis_expression(const expression<ExpressionT> &expression_value)
+                    : expression_value{expression_value} {}
 
-            constexpr auto to_str() const { return serializable_value.to_str().join(sql_strings::OPEN_PARENTHESIS, sql_strings::CLOSE_PARENTHESIS); }
+            constexpr auto to_str() const { return expression_value.to_str().join(sql_strings::OPEN_PARENTHESIS, sql_strings::CLOSE_PARENTHESIS); }
 
         private:
-            SerializableT serializable_value;
+            ExpressionT expression_value;
         };
 
-        template <class UnaryOperatorT, class SerializableT>
-        class unary_expression_serializable : public serializable<SerializableT> {
+        template <class UnaryOperatorT, class ExpressionT>
+        class unary_expression : public expression<unary_expression<UnaryOperatorT, ExpressionT>> {
         public:
-            constexpr unary_expression_serializable(const UnaryOperatorT &operator_string, const serializable<SerializableT> &value)
-                : operator_string{operator_string}, serializable_value{value} {}
+            constexpr unary_expression(const UnaryOperatorT &operator_string, const expression<ExpressionT> &value)
+                : operator_string{operator_string}, expression_value{value} {}
 
-            constexpr auto to_str() const { return serializable_value.to_str().join(operator_string); }
+            constexpr auto to_str() const { return expression_value.to_str().join(operator_string); }
 
         private:
                 UnaryOperatorT operator_string;
-                SerializableT serializable_value;
+                ExpressionT expression_value;
         };
 
         template <class FunctionNameT, class LeftArgT, class RightArgT>
-        class function_serializable : public serializable<function_serializable<FunctionNameT, LeftArgT, RightArgT>> {
+        class function_expression : public expression<function_expression<FunctionNameT, LeftArgT, RightArgT>> {
         public:
-            constexpr function_serializable(const FunctionNameT &function_name, const serializable<LeftArgT> &left_arg, const serializable<RightArgT> &right_arg)
+            constexpr function_expression(const FunctionNameT &function_name, const expression<LeftArgT> &left_arg, const expression<RightArgT> &right_arg)
                 : function_name{function_name}, left_arg{left_arg}, right_arg{right_arg} {}
 
             constexpr auto to_str() const {
@@ -163,107 +163,107 @@ namespace sqlite3pp {
             RightArgT right_arg;
         };
 
-        //! Surrounds a serializable object with parenthesis_expression.
-        //! \param serializable A serializable object.
-        //! \return A constexpr_string that corresponds to the serializable surrounded with parenthesis_expression.
-        template <class SerializableT>
-        constexpr auto P(const serializable<SerializableT> &serializable_value) {
-            return parenthesis_expression_serializable<SerializableT>{serializable_value};
+        //! Surrounds expression with parenthesis.
+        //! \param expression An expression object.
+        //! \return A constexpr_string that corresponds to the expression surrounded with parenthesis.
+        template <class ExpressionT>
+        constexpr auto P(const expression<ExpressionT> &expression_value) {
+            return parenthesis_expression<ExpressionT>{expression_value};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator || (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator || (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::PIPE_PIPE), RightT>{left, sql_strings::PIPE_PIPE, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator * (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator * (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::ASTERISK), RightT>{left, sql_strings::ASTERISK, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator / (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator / (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::FORWARD_SLASH), RightT>{left, sql_strings::FORWARD_SLASH, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator % (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator % (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::PERCENT), RightT>{left, sql_strings::PERCENT, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator + (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator + (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::PLUS), RightT>{left, sql_strings::PLUS, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator - (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator - (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::MINUS), RightT>{left, sql_strings::MINUS, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator << (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator << (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::LEFT_SHIFT), RightT>{left, sql_strings::LEFT_SHIFT, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator >> (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator >> (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::RIGHT_SHIFT), RightT>{left, sql_strings::RIGHT_SHIFT, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator & (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator & (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::AMPERSAND), RightT>{left, sql_strings::AMPERSAND, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator | (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator | (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::PIPE), RightT>{left, sql_strings::PIPE, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator < (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator < (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::LESS_THAN), RightT>{left, sql_strings::LESS_THAN, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator > (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator > (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::GREATER_THAN), RightT>{left, sql_strings::GREATER_THAN, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator <= (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator <= (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::LESS_EQUALS), RightT>{left, sql_strings::LESS_EQUALS, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator >= (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator >= (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::GREATER_EQUALS), RightT>{left, sql_strings::GREATER_EQUALS, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator == (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator == (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::EQUALS_EQUALS), RightT>{left, sql_strings::EQUALS_EQUALS, right};
         }
 
         template <class LeftT, class RightT>
-        constexpr auto operator != (const serializable<LeftT> &left, const serializable<RightT> &right) {
+        constexpr auto operator != (const expression<LeftT> &left, const expression<RightT> &right) {
             return binary_expression<LeftT, decltype(sql_strings::NOT_EQUALS), RightT>{left, sql_strings::NOT_EQUALS, right};
         }
 
         template <class T>
-        constexpr auto operator ~ (const serializable<T> &value) {
-            return unary_expression_serializable<decltype(sql_strings::TILDE), T>{sql_strings::TILDE, value};
+        constexpr auto operator ~ (const expression<T> &value) {
+            return unary_expression<decltype(sql_strings::TILDE), T>{sql_strings::TILDE, value};
         }
 
         template <class T>
-        constexpr auto operator + (const serializable<T> &value) {
-            return unary_expression_serializable<decltype(sql_strings::PLUS), T>{sql_strings::PLUS, value};
+        constexpr auto operator + (const expression<T> &value) {
+            return unary_expression<decltype(sql_strings::PLUS), T>{sql_strings::PLUS, value};
         }
 
         template <class T>
-        constexpr auto operator - (const serializable<T> &value) {
-            return unary_expression_serializable<decltype(sql_strings::MINUS), T>{sql_strings::MINUS, value};
+        constexpr auto operator - (const expression<T> &value) {
+            return unary_expression<decltype(sql_strings::MINUS), T>{sql_strings::MINUS, value};
         }
     }
 }

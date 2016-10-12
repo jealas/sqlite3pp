@@ -19,6 +19,7 @@ namespace sqlite3pp {
             static constexpr auto DOUBLE_QUOTE = make_constexpr_string("\"");
             static constexpr auto OPEN_PARENTHESIS = make_constexpr_string("(");
             static constexpr auto CLOSE_PARENTHESIS = make_constexpr_string(")");
+            static constexpr auto UNDERSCORE = make_constexpr_string("_");
 
             static constexpr auto PIPE_PIPE = make_constexpr_string("||");
             static constexpr auto ASTERISK = make_constexpr_string("*");

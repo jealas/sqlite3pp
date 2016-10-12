@@ -7,6 +7,13 @@
 
 namespace sqlite3pp {
     namespace sql {
+        // Bind parameter expression.
+        struct bind_parameter : public expression<bind_parameter> {
+            constexpr auto to_str() const { return sql_strings::QUESTION_MARK; }
+            constexpr expression_type get_type() const { return expression_type::ANY; }
+        };
+
+        static constexpr bind_parameter _{};
 
         // Date time literal expressions.
         struct current_time_expression : public expression<current_time_expression> {

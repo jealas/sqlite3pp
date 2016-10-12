@@ -2,45 +2,45 @@
 
 #include "sqlite3pp/sql/sql_strings.hxx"
 #include "sqlite3pp/sql/expression_type.hxx"
-#include "sqlite3pp/sql/serializable.hxx"
+#include "sqlite3pp/sql/expressions.hxx"
 
 
 namespace sqlite3pp {
     namespace sql {
 
         // Date time literal expressions.
-        struct current_time_expression : public serializable<current_time_expression> {
+        struct current_time_expression : public expression<current_time_expression> {
             constexpr auto to_str() const { return sql_strings::CURRENT_TIME; }
             constexpr expression_type get_type() const { return expression_type::ANY; }
         };
 
-        constexpr current_time_expression CURRENT_TIME{};
+        static constexpr current_time_expression CURRENT_TIME{};
 
-        struct current_date_expression : public serializable<current_date_expression> {
+        struct current_date_expression : public expression<current_date_expression> {
             constexpr auto to_str() const { return sql_strings::CURRENT_DATE; }
             constexpr expression_type get_type() const { return expression_type::ANY; }
         };
 
-        constexpr current_date_expression CURRENT_DATE{};
+        static constexpr current_date_expression CURRENT_DATE{};
 
-        struct current_timestamp_expression : public serializable<current_timestamp_expression> {
+        struct current_timestamp_expression : public expression<current_timestamp_expression> {
             constexpr auto to_str() const { return sql_strings::CURRENT_TIMESTAMP; }
             constexpr expression_type get_type() const { return expression_type::ANY; }
         };
 
-        constexpr current_timestamp_expression CURRENT_TIMESTAMP{};
+        static constexpr current_timestamp_expression CURRENT_TIMESTAMP{};
 
         // Null literal expression.
-        struct null_expression : public serializable<null_expression> {
+        struct null_expression : public expression<null_expression> {
             constexpr auto to_str() const { return sql_strings::NULL_STR; }
             constexpr expression_type get_type() const { return expression_type::NULL_T; }
         };
 
-        constexpr null_expression NULL_{};
+        static constexpr null_expression NIL{};
 
         // Integer literal expression.
         template <std::size_t IntegerStrLength>
-        class integer_expression : public serializable<integer_expression<IntegerStrLength>> {
+        class integer_expression : public expression<integer_expression<IntegerStrLength>> {
         public:
             constexpr integer_expression(const char(&integer_str)[IntegerStrLength + 1u], std::int64_t integer)
                     : integer_str{integer_str}, integer{integer} {}
@@ -55,7 +55,7 @@ namespace sqlite3pp {
 
         // Unsigned literal expression.
         template <std::size_t UnsignedStrLength>
-        class unsigned_integer_expression : public serializable<unsigned_integer_expression<UnsignedStrLength>> {
+        class unsigned_integer_expression : public expression<unsigned_integer_expression<UnsignedStrLength>> {
         public:
             constexpr unsigned_integer_expression(const char(&unsigned_str)[UnsignedStrLength + 1u], std::uint64_t unsigned_integer)
                     : unsigned_integer_str{unsigned_str}, unsigned_integer{unsigned_integer} {}
@@ -70,7 +70,7 @@ namespace sqlite3pp {
 
         // Float literal expressions.
         template <std::size_t FloatStrLength>
-        class float_expression : public serializable<float_expression<FloatStrLength>> {
+        class float_expression : public expression<float_expression<FloatStrLength>> {
         public:
             constexpr float_expression(const char(&float_str)[FloatStrLength + 1u], float float_value)
                 : float_str{float_str}, float_value{float_value} {}
@@ -84,7 +84,7 @@ namespace sqlite3pp {
         };
 
         template <std::size_t DoubleStrLength>
-        class double_expression : public serializable<double_expression<DoubleStrLength>> {
+        class double_expression : public expression<double_expression<DoubleStrLength>> {
         public:
             constexpr double_expression(const char(&double_str)[DoubleStrLength + 1u], double double_value)
                 : double_str{double_str}, double_value{double_value} {}
@@ -99,7 +99,7 @@ namespace sqlite3pp {
 
         // String literal expression.
         template <std::size_t StrLength>
-        class string_expression : public serializable<string_expression<StrLength>> {
+        class string_expression : public expression<string_expression<StrLength>> {
         public:
             constexpr string_expression(const char(&str)[StrLength + 1u]) : str{str} {}
 

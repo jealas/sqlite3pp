@@ -50,6 +50,7 @@ namespace sqlite3pp {
             static constexpr auto AND = make_constexpr_string("AND");
             static constexpr auto OR = make_constexpr_string("OR");
             static constexpr auto NOT = make_constexpr_string("NOT");
+            static constexpr auto NOTNULL = make_constexpr_string("NOTNULL");
 
             static constexpr auto SELECT = make_constexpr_string("SELECT");
             static constexpr auto FROM = make_constexpr_string("FROM");

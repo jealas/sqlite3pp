@@ -14,12 +14,12 @@ namespace {
         T name;
     };
 
-    constexpr auto name_column = column<name_column_member, column_type::TEXT>("name");
+    static constexpr auto name_column = column<name_column_member, column_type::TEXT>("name");
 }
 
 
 TEST_CASE("columns are serializable.", "test-sql-column") {
-    static constexpr auto name_str = name_column.to_str();
+    constexpr auto name_str = name_column.to_str();
 
     REQUIRE(std::equal(name_str.begin(), name_str.end(), "name"));
 }

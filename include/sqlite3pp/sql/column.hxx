@@ -4,14 +4,14 @@
 
 #include "sqlite3pp/detail/constexpr_string.hxx"
 #include "sqlite3pp/sql/column_type.hxx"
-#include "sqlite3pp/sql/serializable.hxx"
+#include "sqlite3pp/sql/expressions.hxx"
 
 
 namespace sqlite3pp {
     namespace sql {
 
         template<class T>
-        struct column_base : public serializable<T> {
+        struct column_base {
             constexpr auto get_name() const { return static_cast<const T *>(this)->get_name(); }
             constexpr column_type get_type() const { return static_cast<const T *>(this)->get_type(); }
             constexpr operator T&() { return *static_cast<T *>(this); }
@@ -19,7 +19,7 @@ namespace sqlite3pp {
         };
 
         template<template <class> class MemberT, column_type ColumnType, class NameType>
-        class column_t : public column_base<column_t<MemberT, ColumnType, NameType>> {
+        class column_t : public expression<column_t<MemberT, ColumnType, NameType>>, public column_base<column_t<MemberT, ColumnType, NameType>> {
         public:
             template <class T>
             using member_t = MemberT<T>;

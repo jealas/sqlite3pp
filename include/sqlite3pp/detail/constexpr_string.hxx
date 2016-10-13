@@ -72,10 +72,15 @@ namespace sqlite3pp {
 
             constexpr std::size_t length() const { return Length; }
 
-            template<std::size_t ... Sizes>
-            constexpr auto join(const constexpr_string<Sizes> &... strings) const {
+            template <std::size_t Size>
+            constexpr auto join(const constexpr_string<Size> string) const {
+                return string;
+            }
 
-                static_assert(sizeof...(Sizes) > 0u, "You must join at least one string.");
+            template<std::size_t ... Sizes>
+            constexpr auto join(const constexpr_string<Sizes> & ... strings) const {
+
+                static_assert(sizeof...(Sizes) > 1u, "You must join at least two strings.");
 
                 constexpr std::size_t NEW_STRING_LENGTH = sum<Sizes...>() + (Length * (sizeof...(Sizes) - 1u));
                 char new_string[NEW_STRING_LENGTH + 1u] = {'\0'};

@@ -458,3 +458,15 @@ TEST_CASE("NOT BETWEEN can be used with columns.", "[test-sql-expression]") {
 
     REQUIRE(std::equal(not_between_expression_str.begin(), not_between_expression_str.end(), "age NOT BETWEEN 18 AND 21"));
 }
+
+TEST_CASE("ABS function can be used with columns.", "[test-sql-expression]") {
+    constexpr auto abs_expression = ABS(name_column).to_str();
+
+    REQUIRE(std::equal(abs_expression.begin(), abs_expression.end(), "ABS(name)"));
+}
+
+TEST_CASE("ABS function can be used with literal values.", "[test-sql-expression]") {
+    constexpr auto abs_expression = ABS(-I(10)).to_str();
+
+    REQUIRE(std::equal(abs_expression.begin(), abs_expression.end(), "ABS(-10)"));
+}

@@ -19,7 +19,6 @@ namespace {
     static constexpr auto REGEXP_STR = sql_strings::REGEXP.join(sql_strings::SPACE, sql_strings::SPACE);
     static constexpr auto AND_STR = sql_strings::AND.join(sql_strings::SPACE, sql_strings::SPACE);
     static constexpr auto OR_STR = sql_strings::OR.join(sql_strings::SPACE, sql_strings::SPACE);
-    static constexpr auto NOT_STR = sql_strings::SPACE.join(sql_strings::NOT);
 
     static constexpr auto NOT_LIKE_STR = sql_strings::NOT_LIKE.join(sql_strings::SPACE, sql_strings::SPACE);
     static constexpr auto NOT_GLOB_STR = sql_strings::NOT_GLOB.join(sql_strings::SPACE, sql_strings::SPACE);
@@ -213,7 +212,7 @@ namespace sqlite3pp {
             constexpr unary_operator_expression(const UnaryOperatorT &operator_string, const expression<ExpressionT> &value)
                 : operator_string{operator_string}, expression_value{static_cast<const ExpressionT &>(value)} {}
 
-            constexpr auto to_str() const { return expression_value.to_str().join(operator_string); }
+            constexpr auto to_str() const { return join_constexpr_strings(operator_string, expression_value.to_str()); }
 
         private:
                 UnaryOperatorT operator_string;
@@ -351,6 +350,11 @@ namespace sqlite3pp {
         template <class ExpressionT>
         constexpr auto NOT(const expression<ExpressionT> &expr) {
             return function_expression<decltype(sql_strings::NOT), ExpressionT>{sql_strings::NOT, expr};
+        }
+
+        template <class ExpressionT>
+        constexpr auto ABS(const expression<ExpressionT> &expr) {
+            return function_expression<decltype(sql_strings::ABS), ExpressionT>{sql_strings::ABS, expr};
         }
 
     }

@@ -41,6 +41,8 @@ namespace sqlite3pp {
             static constexpr auto LESS_GREATER = make_constexpr_string("<>");
             static constexpr auto TILDE = make_constexpr_string("~");
 
+            static constexpr auto CAST = make_constexpr_string("CAST");
+            static constexpr auto AS = make_constexpr_string("AS");
             static constexpr auto IS = make_constexpr_string("IS");
             static constexpr auto IS_NOT = make_constexpr_string("IS NOT");
             static constexpr auto IN = make_constexpr_string("IN");

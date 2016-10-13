@@ -5,6 +5,7 @@
 #include "sqlite3pp/sql/literal_expressions.hxx"
 #include "sqlite3pp/sql/column_type.hxx"
 #include "sqlite3pp/sql/expressions.hxx"
+#include "sqlite3pp/sql/expression_operators.hxx"
 
 
 namespace {
@@ -469,4 +470,10 @@ TEST_CASE("ABS function can be used with literal values.", "[test-sql-expression
     constexpr auto abs_expression = ABS(-I(10)).to_str();
 
     REQUIRE(std::equal(abs_expression.begin(), abs_expression.end(), "ABS(-10)"));
+}
+
+TEST_CASE("CAST function works with columns.", "[test-sql-expression]") {
+    constexpr auto cast_expression = CAST(age_column, TEXT).to_str();
+
+    REQUIRE(std::equal(cast_expression.begin(), cast_expression.end(), "CAST(age AS TEXT)"));
 }

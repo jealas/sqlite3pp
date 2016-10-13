@@ -1,7 +1,6 @@
 #pragma once
 
 #include "sqlite3pp/sql/sql_strings.hxx"
-#include "sqlite3pp/sql/expression_type.hxx"
 #include "sqlite3pp/sql/expressions.hxx"
 
 
@@ -10,7 +9,6 @@ namespace sqlite3pp {
         // Bind parameter expression.
         struct bind_parameter : public expression<bind_parameter> {
             constexpr auto to_str() const { return sql_strings::QUESTION_MARK; }
-            constexpr expression_type get_type() const { return expression_type::ANY; }
         };
 
         static constexpr bind_parameter _{};
@@ -18,21 +16,18 @@ namespace sqlite3pp {
         // Date time literal expressions.
         struct current_time_expression : public expression<current_time_expression> {
             constexpr auto to_str() const { return sql_strings::CURRENT_TIME; }
-            constexpr expression_type get_type() const { return expression_type::ANY; }
         };
 
         static constexpr current_time_expression CURRENT_TIME{};
 
         struct current_date_expression : public expression<current_date_expression> {
             constexpr auto to_str() const { return sql_strings::CURRENT_DATE; }
-            constexpr expression_type get_type() const { return expression_type::ANY; }
         };
 
         static constexpr current_date_expression CURRENT_DATE{};
 
         struct current_timestamp_expression : public expression<current_timestamp_expression> {
             constexpr auto to_str() const { return sql_strings::CURRENT_TIMESTAMP; }
-            constexpr expression_type get_type() const { return expression_type::ANY; }
         };
 
         static constexpr current_timestamp_expression CURRENT_TIMESTAMP{};
@@ -40,7 +35,6 @@ namespace sqlite3pp {
         // Null literal expression.
         struct null_expression : public expression<null_expression> {
             constexpr auto to_str() const { return sql_strings::NULL_STR; }
-            constexpr expression_type get_type() const { return expression_type::NULL_T; }
         };
 
         static constexpr null_expression NIL{};
@@ -53,7 +47,6 @@ namespace sqlite3pp {
                     : integer_str{integer_str}, integer{integer} {}
 
             constexpr auto to_str() const { return integer_str; }
-            constexpr expression_type get_type() const { return expression_type::INT; }
 
         private:
             constexpr_string<IntegerStrLength> integer_str;
@@ -68,7 +61,6 @@ namespace sqlite3pp {
                     : unsigned_integer_str{unsigned_str}, unsigned_integer{unsigned_integer} {}
 
             constexpr auto to_str() const { return unsigned_integer_str; }
-            constexpr expression_type get_type() const { return expression_type::INT; }
 
         private:
             constexpr_string<UnsignedStrLength> unsigned_integer_str;
@@ -83,7 +75,6 @@ namespace sqlite3pp {
                 : float_str{float_str}, float_value{float_value} {}
 
             constexpr auto to_str() const { return float_str; }
-            constexpr expression_type get_type() const { return expression_type::REAL; }
 
         private:
             constexpr_string<FloatStrLength> float_str;
@@ -97,7 +88,6 @@ namespace sqlite3pp {
                 : double_str{double_str}, double_value{double_value} {}
 
             constexpr auto to_str() const { return double_str; }
-            constexpr expression_type get_type() const { return expression_type::REAL; }
 
         private:
             constexpr_string<DoubleStrLength> double_str;
@@ -111,7 +101,6 @@ namespace sqlite3pp {
             constexpr string_expression(const char(&str)[StrLength + 1u]) : str{str} {}
 
             constexpr auto to_str() const { return str.join(sql_strings::SINGLE_QUOTE, sql_strings::SINGLE_QUOTE); }
-            constexpr expression_type get_type() const { return expression_type::TEXT; }
 
         private:
             constexpr_string<StrLength> str;

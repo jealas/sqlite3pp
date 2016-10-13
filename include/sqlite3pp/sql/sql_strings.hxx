@@ -14,10 +14,51 @@ namespace sqlite3pp {
             static constexpr auto COMMA = make_constexpr_string(",");
             static constexpr auto SPACE = make_constexpr_string(" ");
             static constexpr auto QUESTION_MARK = make_constexpr_string("?");
-            static constexpr auto ASTERISK = make_constexpr_string("*");
             static constexpr auto DOT = make_constexpr_string(".");
             static constexpr auto SINGLE_QUOTE = make_constexpr_string("'");
             static constexpr auto DOUBLE_QUOTE = make_constexpr_string("\"");
+            static constexpr auto OPEN_PARENTHESIS = make_constexpr_string("(");
+            static constexpr auto CLOSE_PARENTHESIS = make_constexpr_string(")");
+            static constexpr auto UNDERSCORE = make_constexpr_string("_");
+
+            static constexpr auto PIPE_PIPE = make_constexpr_string("||");
+            static constexpr auto ASTERISK = make_constexpr_string("*");
+            static constexpr auto FORWARD_SLASH = make_constexpr_string("/");
+            static constexpr auto PERCENT = make_constexpr_string("%");
+            static constexpr auto PLUS = make_constexpr_string("+");
+            static constexpr auto MINUS = make_constexpr_string("-");
+            static constexpr auto LEFT_SHIFT = make_constexpr_string("<<");
+            static constexpr auto RIGHT_SHIFT = make_constexpr_string(">>");
+            static constexpr auto AMPERSAND = make_constexpr_string("&");
+            static constexpr auto PIPE = make_constexpr_string("|");
+            static constexpr auto LESS_THAN = make_constexpr_string("<");
+            static constexpr auto GREATER_THAN = make_constexpr_string(">");
+            static constexpr auto LESS_EQUALS = make_constexpr_string("<=");
+            static constexpr auto GREATER_EQUALS = make_constexpr_string(">=");
+            static constexpr auto EQUALS = make_constexpr_string("=");
+            static constexpr auto EQUALS_EQUALS = make_constexpr_string("==");
+            static constexpr auto NOT_EQUALS = make_constexpr_string("!=");
+            static constexpr auto LESS_GREATER = make_constexpr_string("<>");
+            static constexpr auto TILDE = make_constexpr_string("~");
+
+            static constexpr auto IS = make_constexpr_string("IS");
+            static constexpr auto IS_NOT = make_constexpr_string("IS NOT");
+            static constexpr auto IN = make_constexpr_string("IN");
+            static constexpr auto LIKE = make_constexpr_string("LIKE");
+            static constexpr auto GLOB = make_constexpr_string("GLOB");
+            static constexpr auto MATCH = make_constexpr_string("MATCH");
+            static constexpr auto REGEXP = make_constexpr_string("REGEXP");
+            static constexpr auto BETWEEN = make_constexpr_string("BETWEEN");
+            static constexpr auto AND = make_constexpr_string("AND");
+            static constexpr auto OR = make_constexpr_string("OR");
+            static constexpr auto NOT = make_constexpr_string("NOT");
+            static constexpr auto ABS = make_constexpr_string("ABS");
+
+            static constexpr auto NOT_LIKE = make_constexpr_string("NOT LIKE");
+            static constexpr auto NOT_GLOB = make_constexpr_string("NOT GLOB");
+            static constexpr auto NOT_MATCH = make_constexpr_string("NOT MATCH");
+            static constexpr auto NOT_REGEXP = make_constexpr_string("NOT REGEXP");
+            static constexpr auto NOT_BETWEEN = make_constexpr_string("NOT BETWEEN");
 
             static constexpr auto SELECT = make_constexpr_string("SELECT");
             static constexpr auto FROM = make_constexpr_string("FROM");
@@ -33,25 +74,5 @@ namespace sqlite3pp {
             static constexpr auto CURRENT_TIMESTAMP = make_constexpr_string("CURRENT_TIMESTAMP");
         };
 
-        constexpr decltype(sql_strings::COMMA) sql_strings::COMMA;
-        constexpr decltype(sql_strings::SPACE) sql_strings::SPACE;
-        constexpr decltype(sql_strings::QUESTION_MARK) sql_strings::QUESTION_MARK;
-        constexpr decltype(sql_strings::ASTERISK) sql_strings::ASTERISK;
-        constexpr decltype(sql_strings::DOT) sql_strings::DOT;
-        constexpr decltype(sql_strings::SINGLE_QUOTE) sql_strings::SINGLE_QUOTE;
-        constexpr decltype(sql_strings::DOUBLE_QUOTE) sql_strings::DOUBLE_QUOTE;
-
-        constexpr decltype(sql_strings::SELECT) sql_strings::SELECT;
-        constexpr decltype(sql_strings::FROM) sql_strings::FROM;
-
-        constexpr decltype(sql_strings::NULL_STR) sql_strings::NULL_STR;
-        constexpr decltype(sql_strings::INTEGER) sql_strings::INTEGER;
-        constexpr decltype(sql_strings::REAL) sql_strings::REAL;
-        constexpr decltype(sql_strings::TEXT) sql_strings::TEXT;
-        constexpr decltype(sql_strings::BLOB) sql_strings::BLOB;
-
-        constexpr decltype(sql_strings::CURRENT_TIME) sql_strings::CURRENT_TIME;
-        constexpr decltype(sql_strings::CURRENT_DATE) sql_strings::CURRENT_DATE;
-        constexpr decltype(sql_strings::CURRENT_TIMESTAMP) sql_strings::CURRENT_TIMESTAMP;
     }
 }

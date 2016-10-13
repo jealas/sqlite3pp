@@ -48,10 +48,16 @@ namespace sqlite3pp {
             static constexpr auto GLOB = make_constexpr_string("GLOB");
             static constexpr auto MATCH = make_constexpr_string("MATCH");
             static constexpr auto REGEXP = make_constexpr_string("REGEXP");
+            static constexpr auto BETWEEN = make_constexpr_string("BETWEEN");
             static constexpr auto AND = make_constexpr_string("AND");
             static constexpr auto OR = make_constexpr_string("OR");
             static constexpr auto NOT = make_constexpr_string("NOT");
-            static constexpr auto NOTNULL = make_constexpr_string("NOTNULL");
+
+            static constexpr auto NOT_LIKE = make_constexpr_string("NOT LIKE");
+            static constexpr auto NOT_GLOB = make_constexpr_string("NOT GLOB");
+            static constexpr auto NOT_MATCH = make_constexpr_string("NOT MATCH");
+            static constexpr auto NOT_REGEXP = make_constexpr_string("NOT REGEXP");
+            static constexpr auto NOT_BETWEEN = make_constexpr_string("NOT BETWEEN");
 
             static constexpr auto SELECT = make_constexpr_string("SELECT");
             static constexpr auto FROM = make_constexpr_string("FROM");

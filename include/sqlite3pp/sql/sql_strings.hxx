@@ -67,9 +67,20 @@ namespace sqlite3pp {
 
             static constexpr auto NULL_STR = make_constexpr_string("NULL");
             static constexpr auto INTEGER = make_constexpr_string("INTEGER");
+            static constexpr auto INT = make_constexpr_string("INT");
             static constexpr auto REAL = make_constexpr_string("REAL");
+            static constexpr auto DOUBLE = make_constexpr_string("DOUBLE");
+            static constexpr auto FLOAT = make_constexpr_string("FLOAT");
             static constexpr auto TEXT = make_constexpr_string("TEXT");
+            static constexpr auto CHAR = make_constexpr_string("CHAR");
+            static constexpr auto CLOB = make_constexpr_string("CLOB");
+            static constexpr auto VARCHAR = make_constexpr_string("VARCHAR");
             static constexpr auto BLOB = make_constexpr_string("BLOB");
+            static constexpr auto NUMERIC = make_constexpr_string("NUMERIC");
+            static constexpr auto DECIMAL = make_constexpr_string("DECIMAL");
+            static constexpr auto BOOLEAN = make_constexpr_string("BOOLEAN");
+            static constexpr auto DATE = make_constexpr_string("DATE");
+            static constexpr auto DATETIME = make_constexpr_string("DATETIME");
 
             static constexpr auto CURRENT_TIME = make_constexpr_string("CURRENT_TIME");
             static constexpr auto CURRENT_DATE = make_constexpr_string("CURRENT_DATE");

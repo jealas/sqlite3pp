@@ -70,25 +70,5 @@ namespace sqlite3pp {
             constexpr auto to_str() const { return sql_strings::DATETIME; }
         };
 
-        static constexpr integer_type INTEGER{};
-        static constexpr int_type INT{};
-
-        static constexpr real_type REAL{};
-        static constexpr double_type DOUBLE{};
-        static constexpr float_type FLOAT{};
-
-        static constexpr text_type TEXT{};
-        static constexpr char_type CHAR{};
-        static constexpr clob_type CLOB{};
-        static constexpr varchar_type VARCHAR{};
-
-        static constexpr blob_type BLOB{};
-
-        static constexpr numeric_type NUMERIC{};
-        static constexpr decimal_type DECIMAL{};
-        static constexpr boolean_type BOOLEAN{};
-        static constexpr date_type DATE{};
-        static constexpr datetime_type DATETIME{};
-
     }
 }

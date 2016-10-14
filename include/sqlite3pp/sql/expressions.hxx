@@ -3,7 +3,6 @@
 #include <tuple>
 #include <utility>
 
-#include "sqlite3pp/sql/column.hxx"
 #include "sqlite3pp/sql/serializable.hxx"
 #include "sqlite3pp/sql/sql_strings.hxx"
 #include "sqlite3pp/sql/data_type.hxx"
@@ -33,7 +32,6 @@ namespace {
 namespace sqlite3pp {
     namespace sql {
 
-        // Forward declare the two exprsesion types.
         template <class>
         class is_expression_member;
 

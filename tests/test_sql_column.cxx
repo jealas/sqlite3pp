@@ -1,13 +1,12 @@
 #include <catch.hpp>
 #include <algorithm>
 
-#include "sqlite3pp/sql/column.hxx"
-#include "sqlite3pp/sql/column_type.hxx"
+#include "sqlite3pp/query.hxx"
 
 
 namespace {
 
-    using namespace sqlite3pp::sql;
+    using namespace sqlite3pp;
 
     template <class T>
     struct name_column_member {

@@ -6,38 +6,29 @@
 
 namespace sqlite3pp {
     namespace sql {
+
         // Bind parameter expression.
         struct bind_parameter : public expression<bind_parameter> {
             constexpr auto to_str() const { return sql_strings::QUESTION_MARK; }
         };
-
-        static constexpr bind_parameter _{};
 
         // Date time literal expressions.
         struct current_time_expression : public expression<current_time_expression> {
             constexpr auto to_str() const { return sql_strings::CURRENT_TIME; }
         };
 
-        static constexpr current_time_expression CURRENT_TIME{};
-
         struct current_date_expression : public expression<current_date_expression> {
             constexpr auto to_str() const { return sql_strings::CURRENT_DATE; }
         };
-
-        static constexpr current_date_expression CURRENT_DATE{};
 
         struct current_timestamp_expression : public expression<current_timestamp_expression> {
             constexpr auto to_str() const { return sql_strings::CURRENT_TIMESTAMP; }
         };
 
-        static constexpr current_timestamp_expression CURRENT_TIMESTAMP{};
-
         // Null literal expression.
         struct null_expression : public expression<null_expression> {
             constexpr auto to_str() const { return sql_strings::NULL_STR; }
         };
-
-        static constexpr null_expression NIL{};
 
         // Integer literal expression.
         template <std::size_t IntegerStrLength>
@@ -108,10 +99,3 @@ namespace sqlite3pp {
 
     }
 }
-
-// Helper macros for expressions.
-#define I(i) (::sqlite3pp::sql::integer_expression<sizeof(#i) - 1u>(#i, i))
-#define U(u) (::sqlite3pp::sql::unsigned_integer_expression<sizeof(#u) - 1u>(#u, u))
-#define F(f) (::sqlite3pp::sql::float_expression<sizeof(#f) - 1u>(#f, f))
-#define D(d) (::sqlite3pp::sql::double_expression<sizeof(#d) - 1u>(#d, d))
-#define S(s) (::sqlite3pp::sql::string_expression<sizeof(s) - 1u>(s))

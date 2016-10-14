@@ -35,12 +35,5 @@ namespace sqlite3pp {
             NameType name;
         };
 
-        template <template <class> class MemberT, column_type ColumnType, std::size_t NameLength>
-        constexpr auto column(const char (&name)[NameLength]) {
-            auto name_str = detail::make_constexpr_string(name);
-
-            return column_t<MemberT, ColumnType, decltype(name_str)>{name_str};
-        }
-
     }
 }

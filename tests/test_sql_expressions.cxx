@@ -1,16 +1,13 @@
 #include <catch.hpp>
 #include <algorithm>
 
+#include "sqlite3pp/query.hxx"
 #include "sqlite3pp/sql/column.hxx"
-#include "sqlite3pp/sql/literal_expressions.hxx"
-#include "sqlite3pp/sql/column_type.hxx"
-#include "sqlite3pp/sql/expressions.hxx"
-#include "sqlite3pp/sql/expression_operators.hxx"
 
 
 namespace {
 
-    using namespace sqlite3pp::sql;
+    using namespace sqlite3pp;
 
     template <class T>
     struct name_column_member {
@@ -256,8 +253,8 @@ TEST_CASE("Literal expressions can be used with the prefix - operator.", "[test-
     REQUIRE(std::equal(unary_expression_str.begin(), unary_expression_str.end(), "-2"));
 }
 
-TEST_CASE("IS NOT can be used with NIL.", "[test-sql-expressions]") {
-    constexpr auto is_not_null_expression_str = NIL.IS.NOT(NIL).to_str();
+TEST_CASE("IS NOT can be used with NULL.", "[test-sql-expressions]") {
+    constexpr auto is_not_null_expression_str = NULL.IS.NOT(NULL).to_str();
 
     REQUIRE(std::equal(is_not_null_expression_str.begin(), is_not_null_expression_str.end(), "NULL IS NOT NULL"));
 }
@@ -269,7 +266,7 @@ TEST_CASE("IS NOT can be used with integer literal constants.", "[test-sql-expre
 }
 
 TEST_CASE("IS NOT can be used with columns.", "[test-sql-expressions]") {
-    constexpr auto column_is_not_null_str = age_column.IS.NOT(NIL).to_str();
+    constexpr auto column_is_not_null_str = age_column.IS.NOT(NULL).to_str();
 
     REQUIRE(std::equal(column_is_not_null_str.begin(), column_is_not_null_str.end(), "age IS NOT NULL"));
 }
@@ -281,13 +278,13 @@ TEST_CASE("Bind parameters can be used with IS NOT expressions.", "[test-sql-exp
 }
 
 TEST_CASE("Bind parameters can be used as expressions with the IS NOT expression.", "[test-sql-expressions]") {
-    constexpr auto bind_parameter_is_not_str = _.IS.NOT(NIL).to_str();
+    constexpr auto bind_parameter_is_not_str = _.IS.NOT(NULL).to_str();
 
     REQUIRE(std::equal(bind_parameter_is_not_str.begin(), bind_parameter_is_not_str.end(), "? IS NOT NULL"));
 }
 
-TEST_CASE("IS construct can be used with NIL.", "[test-sql-expressions]") {
-    constexpr auto is_null_expression_str = NIL.IS(NIL).to_str();
+TEST_CASE("IS construct can be used with NULL.", "[test-sql-expressions]") {
+    constexpr auto is_null_expression_str = NULL.IS(NULL).to_str();
 
     REQUIRE(std::equal(is_null_expression_str.begin(), is_null_expression_str.end(), "NULL IS NULL"));
 }
@@ -299,7 +296,7 @@ TEST_CASE("IS construct can be used with integer literal constants.", "[test-sql
 }
 
 TEST_CASE("IS construct can be used with columns.", "[test-sql-expressions]") {
-    constexpr auto column_is_null_str = age_column.IS(NIL).to_str();
+    constexpr auto column_is_null_str = age_column.IS(NULL).to_str();
 
     REQUIRE(std::equal(column_is_null_str.begin(), column_is_null_str.end(), "age IS NULL"));
 }

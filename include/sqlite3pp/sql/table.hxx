@@ -48,12 +48,5 @@ namespace sqlite3pp {
             const column_set<Columns...> columns;
         };
 
-        template<std::size_t TableNameLength, class ... ColumnTypes>
-        constexpr auto table(const char (&name)[TableNameLength], const column_base<ColumnTypes> &... columns) {
-            auto name_str = detail::make_constexpr_string(name);
-
-            return table_t<decltype(name_str), ColumnTypes...>{name_str, columns...};
-        }
-
     }
 }

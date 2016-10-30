@@ -7,7 +7,7 @@
 #include "sqlite3pp/sql/column.hxx"
 #include "sqlite3pp/sql/table.hxx"
 #include "sqlite3pp/detail/constexpr_string.hxx"
-#include "sqlite3pp/sql/select_statement.hpp"
+#include "sqlite3pp/sql/select_statement.hxx"
 
 namespace { using namespace sqlite3pp::sql; }
 

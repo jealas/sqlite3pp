@@ -21,13 +21,14 @@ namespace sqlite3pp {
         template <class SelectT, class TableT>
         class select_from;
 
-        // Select base class
+        template <class SelectT, class ExpressionT>
+        class select_where;
+
         template <class T>
         struct select_base {
             constexpr auto to_str() const { return static_cast<const T *>(this)->to_str(); }
         };
 
-        // Members.
         struct select_all_member {
             template <class ... ResultColumnT>
             constexpr auto operator()(const expression<ResultColumnT> & ... result_columns) const {
@@ -51,6 +52,21 @@ namespace sqlite3pp {
             template <class TableT>
             constexpr auto operator()(const table_base<TableT> &table) const {
                 return select_from<SelectT, TableT>{select, table};
+            }
+
+        private:
+            const SelectT &select;
+        };
+
+        template <class SelectT>
+        class select_where_member {
+        public:
+            constexpr select_where_member(const select_base<SelectT> &select)
+                : select{static_cast<const SelectT &>(select)} {}
+
+            template <class ExpressionT>
+            constexpr auto operator()(const expression<ExpressionT> &expression) const {
+                return select_where<SelectT, ExpressionT>{select, expression};
             }
 
         private:
@@ -149,7 +165,7 @@ namespace sqlite3pp {
         class select_from : public select_base<select_from<SelectT, TableT>> {
         public:
             constexpr select_from(const select_base<SelectT> &select, const table_base<TableT> &table)
-                : select{static_cast<const SelectT &>(select)}, table{static_cast<const TableT &>(table)} {}
+                : WHERE{*this}, select{static_cast<const SelectT &>(select)}, table{static_cast<const TableT &>(table)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -159,12 +175,30 @@ namespace sqlite3pp {
                 );
             }
 
+            select_where_member<select_from<SelectT, TableT>> WHERE;
+
         private:
             const SelectT &select;
             const TableT &table;
         };
 
-        class select_where : public select_base<select_where> {
+        template <class SelectT, class ExpressionT>
+        class select_where : public select_base<select_where<SelectT, ExpressionT>> {
+        public:
+            constexpr select_where(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
+                : select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                        select.to_str(),
+                        sql_strings::WHERE,
+                        expression.to_str()
+                );
+            }
+
+        private:
+            const SelectT &select;
+            const ExpressionT &expression;
         };
     }
 }

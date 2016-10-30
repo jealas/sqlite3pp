@@ -66,6 +66,7 @@ namespace sqlite3pp {
             static constexpr auto FROM = make_constexpr_string("FROM");
             static constexpr auto ALL = make_constexpr_string("ALL");
             static constexpr auto DISTINCT = make_constexpr_string("DISTINCT");
+            static constexpr auto WHERE = make_constexpr_string("WHERE");
 
             static constexpr auto NULL_STR = make_constexpr_string("NULL");
             static constexpr auto INTEGER = make_constexpr_string("INTEGER");

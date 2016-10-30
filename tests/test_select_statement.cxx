@@ -77,3 +77,22 @@ TEST_CASE("Can use SELECT DISTINCT FROM statement with columns.", "[test-select-
 
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT DISTINCT age,name FROM person"));
 }
+
+TEST_CASE("Can use SELECT FROM WHERE statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name).FROM(person).WHERE(age == I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age==10"));
+}
+
+TEST_CASE("Can use SELECT ALL FROM WHERE statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT.ALL(age, name).FROM(person).WHERE(name != S("joe")).to_str();
+
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT ALL age,name FROM person WHERE name!='joe'"));
+}
+
+TEST_CASE("Can use SELECT DISTINCT FROM WHERE statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT.DISTINCT(age, name).FROM(person).WHERE((age < I(20)).AND(name != S("tom"))).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT DISTINCT age,name FROM person WHERE age<20 AND name!='tom'"));
+}

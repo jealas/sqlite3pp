@@ -7,7 +7,7 @@
 #include "sqlite3pp/sql/column.hxx"
 #include "sqlite3pp/sql/table.hxx"
 #include "sqlite3pp/detail/constexpr_string.hxx"
-
+#include "sqlite3pp/sql/select_statement.hpp"
 
 namespace { using namespace sqlite3pp::sql; }
 
@@ -64,10 +64,10 @@ namespace sqlite3pp {
             return table_t<decltype(name_str), ColumnTypes...>{name_str, columns...};
         }
 
-
-
         // Query API.
         static constexpr all_t ALL{};
+
+        static constexpr select_member SELECT{};
 
 }
 

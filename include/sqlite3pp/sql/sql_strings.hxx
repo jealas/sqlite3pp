@@ -55,6 +55,7 @@ namespace sqlite3pp {
             static constexpr auto OR = make_constexpr_string("OR");
             static constexpr auto NOT = make_constexpr_string("NOT");
             static constexpr auto ABS = make_constexpr_string("ABS");
+            static constexpr auto COUNT = make_constexpr_string("COUNT");
 
             static constexpr auto NOT_LIKE = make_constexpr_string("NOT LIKE");
             static constexpr auto NOT_GLOB = make_constexpr_string("NOT GLOB");
@@ -67,6 +68,9 @@ namespace sqlite3pp {
             static constexpr auto ALL = make_constexpr_string("ALL");
             static constexpr auto DISTINCT = make_constexpr_string("DISTINCT");
             static constexpr auto WHERE = make_constexpr_string("WHERE");
+            static constexpr auto GROUP = make_constexpr_string("GROUP");
+            static constexpr auto BY = make_constexpr_string("BY");
+            static constexpr auto HAVING = make_constexpr_string("HAVING");
 
             static constexpr auto NULL_STR = make_constexpr_string("NULL");
             static constexpr auto INTEGER = make_constexpr_string("INTEGER");

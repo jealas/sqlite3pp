@@ -260,5 +260,19 @@ namespace sqlite3pp {
             DataTypeT data_type;
         };
 
+        template <class ExpressionT>
+        class count_expression : public expression<count_expression<ExpressionT>> {
+        public:
+            constexpr count_expression(const expression<ExpressionT> &value_expression)
+                    : expression{static_cast<const ExpressionT &>(value_expression)} {}
+
+            constexpr auto to_str() const {
+                return join_constexpr_strings(sql_strings::COUNT, sql_strings::OPEN_PARENTHESIS, expression.to_str(), sql_strings::CLOSE_PARENTHESIS);
+            }
+
+        private:
+            const ExpressionT &expression;
+        };
+
     }
 }

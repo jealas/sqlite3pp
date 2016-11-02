@@ -96,3 +96,21 @@ TEST_CASE("Can use SELECT DISTINCT FROM WHERE statement with columns.", "[test-s
 
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT DISTINCT age,name FROM person WHERE age<20 AND name!='tom'"));
 }
+
+TEST_CASE("Can use SELECT FROM GROUP BY statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name).FROM(person).GROUP.BY(age).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person GROUP BY age"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name).FROM(person).WHERE(age > I(50)).GROUP.BY(name).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name).FROM(person).WHERE(age > I(50)).GROUP.BY(name).HAVING(COUNT(age) > I(2)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2"));
+}

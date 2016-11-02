@@ -24,6 +24,15 @@ namespace sqlite3pp {
         template <class SelectT, class ExpressionT>
         class select_where;
 
+        template <class SelectT>
+        class select_group;
+
+        template <class SelectT, class ... ExpressionT>
+        class select_group_by;
+
+        template <class SelectT, class ExpressionT>
+        class select_having;
+
         template <class T>
         struct select_base {
             constexpr auto to_str() const { return static_cast<const T *>(this)->to_str(); }
@@ -73,11 +82,53 @@ namespace sqlite3pp {
             const SelectT &select;
         };
 
+        template <class SelectT>
+        class select_by_member {
+        public:
+            constexpr select_by_member(const select_base<SelectT> &select)
+                : select{static_cast<const SelectT &>(select)} {}
+
+            template <class ... ExpressionT>
+            constexpr auto operator()(const expression<ExpressionT> & ... expressions) const {
+                return select_group_by<SelectT, ExpressionT...>{select, expressions...};
+            }
+
+        private:
+            const SelectT &select;
+        };
+
+        template <class SelectT>
+        class select_group_member {
+        public:
+            constexpr select_group_member(const select_base<SelectT> &select)
+                : BY{select}, select{static_cast<const SelectT &>(select)} {}
+
+            select_by_member<SelectT> BY;
+
+        private:
+            const SelectT &select;
+        };
+
+        template <class SelectT>
+        class select_having_member {
+        public:
+            constexpr select_having_member(const select_base<SelectT> &select)
+                : select{static_cast<const SelectT &>(select)} {}
+
+            template <class ExpressionT>
+            constexpr auto operator()(const expression<ExpressionT> &expression) const {
+                return select_having<SelectT, ExpressionT>{select, expression};
+            }
+
+        private:
+            const SelectT &select;
+        };
+
         template <class ... ResultColumnT>
         class select : public select_base<select<ResultColumnT...>> {
         public:
             constexpr select(const expression<ResultColumnT> & ... result_columns)
-                    : FROM{*this}, result_columns{static_cast<const ResultColumnT &>(result_columns)...} {}
+                : FROM{*this}, result_columns{static_cast<const ResultColumnT &>(result_columns)...} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -151,7 +202,6 @@ namespace sqlite3pp {
         };
 
         struct select_member {
-
             template <class ... ResultColumnT>
             constexpr auto operator()(const expression<ResultColumnT> & ... result_columns) const {
                 return select<ResultColumnT...>{result_columns...};
@@ -165,7 +215,7 @@ namespace sqlite3pp {
         class select_from : public select_base<select_from<SelectT, TableT>> {
         public:
             constexpr select_from(const select_base<SelectT> &select, const table_base<TableT> &table)
-                : WHERE{*this}, select{static_cast<const SelectT &>(select)}, table{static_cast<const TableT &>(table)} {}
+                : WHERE{*this}, GROUP{*this}, select{static_cast<const SelectT &>(select)}, table{static_cast<const TableT &>(table)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -176,6 +226,7 @@ namespace sqlite3pp {
             }
 
             select_where_member<select_from<SelectT, TableT>> WHERE;
+            select_group_member<select_from<SelectT, TableT>> GROUP;
 
         private:
             const SelectT &select;
@@ -186,12 +237,67 @@ namespace sqlite3pp {
         class select_where : public select_base<select_where<SelectT, ExpressionT>> {
         public:
             constexpr select_where(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
-                : select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
+                : GROUP{*this}, select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
                         select.to_str(),
                         sql_strings::WHERE,
+                        expression.to_str()
+                );
+            }
+
+            select_group_member<select_where<SelectT, ExpressionT>> GROUP;
+
+        private:
+            const SelectT &select;
+            const ExpressionT &expression;
+        };
+
+        template <class SelectT, class ... ExpressionT>
+        class select_group_by : public select_base<select_group_by<SelectT, ExpressionT...>> {
+        public:
+            constexpr select_group_by(const select_base<SelectT> &select, const expression<ExpressionT> & ... expressions)
+                : HAVING{*this}, select{static_cast<const SelectT &>(select)}, expressions{expressions...} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                        select.to_str(),
+                        sql_strings::GROUP,
+                        sql_strings::BY,
+                        make_expression_str()
+                );
+            }
+
+            select_having_member<select_group_by<SelectT, ExpressionT...>> HAVING;
+
+        private:
+            template <std::size_t ... ExpressionIndex>
+            constexpr auto make_expression_str_helper(std::index_sequence<ExpressionIndex...>) const {
+                return sql_strings::COMMA.join(
+                        std::get<ExpressionIndex>(expressions).to_str()...
+                );
+            }
+
+            constexpr auto make_expression_str() const {
+                return make_expression_str_helper(std::make_index_sequence<std::tuple_size<decltype(expressions)>::value>());
+            }
+
+        private:
+            const SelectT &select;
+            std::tuple<const ExpressionT & ...> expressions;
+        };
+
+        template <class SelectT, class ExpressionT>
+        class select_having {
+        public:
+            constexpr select_having(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
+                : select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                        select.to_str(),
+                        sql_strings::HAVING,
                         expression.to_str()
                 );
             }

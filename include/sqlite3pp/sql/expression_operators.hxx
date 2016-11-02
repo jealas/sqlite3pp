@@ -126,6 +126,11 @@ namespace sqlite3pp {
                 return cast_expression<ExpressionT, DataTypeT>{expr, data_type};
             }
 
+            template <class ExpressionT>
+            constexpr auto COUNT(const expression<ExpressionT> &expr) {
+                return count_expression<ExpressionT>{expr};
+            }
+
         }
     }
 }

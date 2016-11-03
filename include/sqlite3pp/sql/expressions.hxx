@@ -48,10 +48,7 @@ namespace sqlite3pp {
         class not_between_expression;
 
         template <class ExpressionT>
-        class expression : public serializable<ExpressionT> {
-        public:
-            constexpr expression() : IS{*this}, NOT{*this} {}
-
+        struct expression : public serializable<ExpressionT> {
             template <class OtherExpressionT>
             constexpr auto AND(const expression<OtherExpressionT> &other_expression) const {
                 return binary_operator_expression<ExpressionT, decltype(AND_STR), OtherExpressionT>{*this, AND_STR, other_expression};
@@ -87,9 +84,8 @@ namespace sqlite3pp {
                 return between_expression<ExpressionT, StartExpressionT, EndExpressionT>{*this, start, end};
             }
 
-        public:
-            is_expression_member<ExpressionT> IS;
-            not_expression_member<ExpressionT> NOT;
+            is_expression_member<ExpressionT> IS{*this};
+            not_expression_member<ExpressionT> NOT{*this};
         };
 
         // Full expression types.

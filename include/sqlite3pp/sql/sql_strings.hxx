@@ -71,6 +71,7 @@ namespace sqlite3pp {
             static constexpr auto GROUP = make_constexpr_string("GROUP");
             static constexpr auto BY = make_constexpr_string("BY");
             static constexpr auto HAVING = make_constexpr_string("HAVING");
+            static constexpr auto ORDER = make_constexpr_string("ORDER");
 
             static constexpr auto NULL_STR = make_constexpr_string("NULL");
             static constexpr auto INTEGER = make_constexpr_string("INTEGER");

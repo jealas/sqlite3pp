@@ -11,6 +11,11 @@
 namespace sqlite3pp {
     namespace sql {
 
+        template <class T>
+        struct select_base {
+            constexpr auto to_str() const { return static_cast<const T *>(this)->to_str(); }
+        };
+
         // Forward Declarations.
         template <class ... ResultColumnT>
         class select_all;
@@ -33,9 +38,62 @@ namespace sqlite3pp {
         template <class SelectT, class ExpressionT>
         class select_having;
 
-        template <class T>
-        struct select_base {
-            constexpr auto to_str() const { return static_cast<const T *>(this)->to_str(); }
+        template <class SelectT, class ... ExpressionT>
+        class select_order_by {
+        public:
+            constexpr select_order_by(const select_base<SelectT> &select, const expression<ExpressionT> & ... expressions)
+                : select{static_cast<const SelectT &>(select)}, expressions{static_cast<const ExpressionT &>(expressions)...} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                        select.to_str(),
+                        sql_strings::ORDER,
+                        sql_strings::BY,
+                        make_expression_str(std::make_index_sequence<sizeof...(ExpressionT)>())
+                );
+            }
+
+        private:
+            template <std::size_t ... ExpressionIndex>
+            constexpr auto make_expression_str(std::index_sequence<ExpressionIndex...>) const {
+                return sql_strings::COMMA.join(std::get<ExpressionIndex>(expressions).to_str()...);
+            }
+
+        private:
+            const SelectT &select;
+            std::tuple<const ExpressionT &...> expressions;
+        };
+
+        template <class SelectT>
+        class select_order_by_member {
+        public:
+            constexpr select_order_by_member(const select_base<SelectT> &select)
+                : select{static_cast<const SelectT &>(select)} {}
+
+            template <class ... ExpressionT>
+            constexpr auto operator()(const expression<ExpressionT> & ... expressions) const {
+                return select_order_by<SelectT, ExpressionT...>{select, expressions...};
+            }
+
+        private:
+            const SelectT &select;
+        };
+
+        template <class SelectT>
+        class select_order_member {
+        public:
+            constexpr select_order_member(const select_base<SelectT> &select)
+                : BY{select}, select{static_cast<const SelectT &>(select)} {}
+
+            select_order_by_member<SelectT> BY;
+
+        private:
+            const SelectT &select;
+        };
+
+        template <class SelectT>
+        struct select_core : public select_base<SelectT> {
+            select_order_member<SelectT> ORDER{*this};
         };
 
         struct select_all_member {
@@ -83,9 +141,9 @@ namespace sqlite3pp {
         };
 
         template <class SelectT>
-        class select_by_member {
+        class select_group_by_member {
         public:
-            constexpr select_by_member(const select_base<SelectT> &select)
+            constexpr select_group_by_member(const select_base<SelectT> &select)
                 : select{static_cast<const SelectT &>(select)} {}
 
             template <class ... ExpressionT>
@@ -103,7 +161,7 @@ namespace sqlite3pp {
             constexpr select_group_member(const select_base<SelectT> &select)
                 : BY{select}, select{static_cast<const SelectT &>(select)} {}
 
-            select_by_member<SelectT> BY;
+            select_group_by_member<SelectT> BY;
 
         private:
             const SelectT &select;
@@ -125,7 +183,7 @@ namespace sqlite3pp {
         };
 
         template <class ... ResultColumnT>
-        class select : public select_base<select<ResultColumnT...>> {
+        class select : public select_core<select<ResultColumnT...>> {
         public:
             constexpr select(const expression<ResultColumnT> & ... result_columns)
                 : FROM{*this}, result_columns{static_cast<const ResultColumnT &>(result_columns)...} {}
@@ -150,7 +208,7 @@ namespace sqlite3pp {
         };
 
         template <class ... ResultColumnT>
-        class select_all : public select_base<select_all<ResultColumnT...>> {
+        class select_all : public select_core<select_all<ResultColumnT...>> {
         public:
             constexpr select_all(const expression<ResultColumnT> & ... result_columns)
                 : FROM{*this}, result_columns{static_cast<const ResultColumnT &>(result_columns)...} {}
@@ -176,7 +234,7 @@ namespace sqlite3pp {
         };
 
         template <class ... ResultColumnT>
-        class select_distinct : public select_base<select_distinct<ResultColumnT...>> {
+        class select_distinct : public select_core<select_distinct<ResultColumnT...>> {
         public:
             constexpr select_distinct(const expression<ResultColumnT> & ... result_columns)
                 : FROM{*this}, result_columns{static_cast<const ResultColumnT &>(result_columns)...} {}
@@ -212,7 +270,7 @@ namespace sqlite3pp {
         };
 
         template <class SelectT, class TableT>
-        class select_from : public select_base<select_from<SelectT, TableT>> {
+        class select_from : public select_core<select_from<SelectT, TableT>> {
         public:
             constexpr select_from(const select_base<SelectT> &select, const table_base<TableT> &table)
                 : WHERE{*this}, GROUP{*this}, select{static_cast<const SelectT &>(select)}, table{static_cast<const TableT &>(table)} {}
@@ -234,7 +292,7 @@ namespace sqlite3pp {
         };
 
         template <class SelectT, class ExpressionT>
-        class select_where : public select_base<select_where<SelectT, ExpressionT>> {
+        class select_where : public select_core<select_where<SelectT, ExpressionT>> {
         public:
             constexpr select_where(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
                 : GROUP{*this}, select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
@@ -255,7 +313,7 @@ namespace sqlite3pp {
         };
 
         template <class SelectT, class ... ExpressionT>
-        class select_group_by : public select_base<select_group_by<SelectT, ExpressionT...>> {
+        class select_group_by : public select_core<select_group_by<SelectT, ExpressionT...>> {
         public:
             constexpr select_group_by(const select_base<SelectT> &select, const expression<ExpressionT> & ... expressions)
                 : HAVING{*this}, select{static_cast<const SelectT &>(select)}, expressions{expressions...} {}
@@ -265,7 +323,7 @@ namespace sqlite3pp {
                         select.to_str(),
                         sql_strings::GROUP,
                         sql_strings::BY,
-                        make_expression_str()
+                        make_expression_str(std::make_index_sequence<std::tuple_size<decltype(expressions)>::value>())
                 );
             }
 
@@ -273,14 +331,8 @@ namespace sqlite3pp {
 
         private:
             template <std::size_t ... ExpressionIndex>
-            constexpr auto make_expression_str_helper(std::index_sequence<ExpressionIndex...>) const {
-                return sql_strings::COMMA.join(
-                        std::get<ExpressionIndex>(expressions).to_str()...
-                );
-            }
-
-            constexpr auto make_expression_str() const {
-                return make_expression_str_helper(std::make_index_sequence<std::tuple_size<decltype(expressions)>::value>());
+            constexpr auto make_expression_str(std::index_sequence<ExpressionIndex...>) const {
+                return sql_strings::COMMA.join(std::get<ExpressionIndex>(expressions).to_str()...);
             }
 
         private:
@@ -289,7 +341,7 @@ namespace sqlite3pp {
         };
 
         template <class SelectT, class ExpressionT>
-        class select_having {
+        class select_having : public select_core<select_having<SelectT, ExpressionT>> {
         public:
             constexpr select_having(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
                 : select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}

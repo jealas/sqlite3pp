@@ -94,14 +94,16 @@ TEST_CASE("Can use SELECT ALL FROM WHERE statement with columns.", "[test-select
 }
 
 TEST_CASE("Can use SELECT DISTINCT FROM WHERE statement with columns.", "[test-select-statement]") {
-    constexpr auto select_str = SELECT.DISTINCT(age, name).FROM(person)
+    constexpr auto select_str = SELECT.DISTINCT(age, name)
+                                .FROM(person)
                                 .WHERE((age < I(20)).AND(name != S("tom"))).to_str();
 
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT DISTINCT age,name FROM person WHERE age<20 AND name!='tom'"));
 }
 
 TEST_CASE("Can use SELECT FROM GROUP BY statement with columns.", "[test-select-statement]") {
-    constexpr auto select_str = SELECT(age, name).FROM(person)
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
                                 .GROUP.BY(age).to_str();
 
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person GROUP BY age"));
@@ -124,4 +126,42 @@ TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING statement with columns.", "
                                 .HAVING(COUNT(age) > I(2)).to_str();
 
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2"));
+}
+
+TEST_CASE("Can use SELECT FROM ORDER BY statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .ORDER.BY(age).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .ORDER.BY(age).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .ORDER.BY(age).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age"));
 }

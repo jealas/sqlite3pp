@@ -191,7 +191,7 @@ namespace sqlite3pp {
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
                         sql_strings::SELECT,
-                        make_result_column_str(std::make_index_sequence<std::tuple_size<decltype(result_columns)>::value>())
+                        make_result_column_str(std::make_index_sequence<sizeof...(ResultColumnT)>())
                 );
             }
 
@@ -217,7 +217,7 @@ namespace sqlite3pp {
                 return sql_strings::SPACE.join(
                         sql_strings::SELECT,
                         sql_strings::ALL,
-                        make_result_column_str(std::make_index_sequence<std::tuple_size<decltype(result_columns)>::value>())
+                        make_result_column_str(std::make_index_sequence<sizeof...(ResultColumnT)>())
                 );
             }
 
@@ -243,7 +243,7 @@ namespace sqlite3pp {
                 return sql_strings::SPACE.join(
                         sql_strings::SELECT,
                         sql_strings::DISTINCT,
-                        make_result_column_str(std::make_index_sequence<std::tuple_size<decltype(result_columns)>::value>())
+                        make_result_column_str(std::make_index_sequence<sizeof...(ResultColumnT)>())
                 );
             }
 
@@ -323,7 +323,7 @@ namespace sqlite3pp {
                         select.to_str(),
                         sql_strings::GROUP,
                         sql_strings::BY,
-                        make_expression_str(std::make_index_sequence<std::tuple_size<decltype(expressions)>::value>())
+                        make_expression_str(std::make_index_sequence<sizeof...(ExpressionT)>())
                 );
             }
 

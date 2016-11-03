@@ -420,7 +420,7 @@ namespace sqlite3pp {
         class select_limit : public select_core<select_limit<SelectT, ExpressionT>> {
         public:
             constexpr select_limit(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
-                : select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
+                : OFFSET{*this}, select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -430,19 +430,49 @@ namespace sqlite3pp {
                 );
             }
 
+            select_offset_member<select_limit<SelectT, ExpressionT>> OFFSET;
+
         private:
             const SelectT &select;
             const ExpressionT &expression;
         };
 
         template <class SelectT, class StartRangeExpressionT, class EndRangeExpressionT>
-        class select_limit_range {
+        class select_limit_range : public select_base<select_limit_range<SelectT, StartRangeExpressionT, EndRangeExpressionT>> {
+        public:
+            constexpr select_limit_range(const select_base<SelectT> &select,
+                                         const expression<StartRangeExpressionT> &start_range,
+                                         const expression<EndRangeExpressionT> &end_range)
 
+                : select{static_cast<const SelectT &>(select)},
+                  start_range{static_cast<const StartRangeExpressionT &>(start_range)},
+                  end_range{static_cast<const EndRangeExpressionT &>(end_range)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(select.to_str(),
+                                               sql_strings::LIMIT,
+                                               sql_strings::COMMA.join(start_range.to_str(), end_range.to_str()));
+            }
+
+        private:
+            const SelectT &select;
+            const StartRangeExpressionT &start_range;
+            const EndRangeExpressionT &end_range;
         };
 
         template <class SelectT, class ExpressionT>
-        class select_limit_offset {
+        class select_limit_offset : public select_base<select_limit_offset<SelectT, ExpressionT>> {
+        public:
+            constexpr select_limit_offset(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
+                : select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
 
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(select.to_str(), sql_strings::OFFSET, expression.to_str());
+            }
+
+        private:
+            const SelectT &select;
+            const ExpressionT &expression;
         };
     }
 }

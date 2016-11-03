@@ -38,11 +38,23 @@ namespace sqlite3pp {
         template <class SelectT, class ExpressionT>
         class select_having;
 
+        template <class SelectT, class ExpressionT>
+        class select_limit;
+
+        template <class SelectT, class StartRangeExpressionT, class EndRangeExpressionT>
+        class select_limit_range;
+
+        template <class SelectT, class ExpressionT>
+        class select_limit_offset;
+
+        template <class SelectT>
+        class select_limit_member;
+
         template <class SelectT, class ... ExpressionT>
-        class select_order_by {
+        class select_order_by : public select_base<select_order_by<SelectT, ExpressionT...>> {
         public:
             constexpr select_order_by(const select_base<SelectT> &select, const expression<ExpressionT> & ... expressions)
-                : select{static_cast<const SelectT &>(select)}, expressions{static_cast<const ExpressionT &>(expressions)...} {}
+                : LIMIT{*this}, select{static_cast<const SelectT &>(select)}, expressions{static_cast<const ExpressionT &>(expressions)...} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -52,6 +64,8 @@ namespace sqlite3pp {
                         make_expression_str(std::make_index_sequence<sizeof...(ExpressionT)>())
                 );
             }
+
+            select_limit_member<select_order_by<SelectT, ExpressionT...>> LIMIT;
 
         private:
             template <std::size_t ... ExpressionIndex>
@@ -181,6 +195,41 @@ namespace sqlite3pp {
             const SelectT &select;
         };
 
+        template <class SelectT>
+        class select_offset_member {
+        public:
+            constexpr select_offset_member(const select_base<SelectT> &select)
+                : select{static_cast<const SelectT &>(select)} {}
+
+            template <class ExpressionT>
+            constexpr auto operator()(const expression<ExpressionT> &expression) const {
+                return select_limit_offset<SelectT, ExpressionT>{select, expression};
+            }
+
+        private:
+            const SelectT &select;
+        };
+
+        template <class SelectT>
+        class select_limit_member {
+        public:
+            constexpr select_limit_member(const select_base<SelectT> &select)
+                : select{static_cast<const SelectT &>(select)} {}
+
+            template <class ExpressionT>
+            constexpr auto operator()(const expression<ExpressionT> &expression) const {
+                return select_limit<SelectT, ExpressionT>{select, expression};
+            }
+
+            template <class StartRangeExpressionT, class EndRangeExpressionT>
+            constexpr auto operator()(const expression<StartRangeExpressionT> &start_range, const expression<EndRangeExpressionT> &end_range) const {
+                return select_limit_range<SelectT, StartRangeExpressionT, EndRangeExpressionT>{select, start_range, end_range};
+            };
+
+        private:
+            const SelectT &select;
+        };
+
         template <class ... ResultColumnT>
         class select : public select_core<select<ResultColumnT...>> {
         public:
@@ -272,7 +321,7 @@ namespace sqlite3pp {
         class select_from : public select_core<select_from<SelectT, TableT>> {
         public:
             constexpr select_from(const select_base<SelectT> &select, const table_base<TableT> &table)
-                : WHERE{*this}, GROUP{*this}, ORDER{*this}, select{static_cast<const SelectT &>(select)}, table{static_cast<const TableT &>(table)} {}
+                : WHERE{*this}, GROUP{*this}, ORDER{*this}, LIMIT{*this}, select{static_cast<const SelectT &>(select)}, table{static_cast<const TableT &>(table)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -285,6 +334,7 @@ namespace sqlite3pp {
             select_where_member<select_from<SelectT, TableT>> WHERE;
             select_group_member<select_from<SelectT, TableT>> GROUP;
             select_order_member<select_from<SelectT, TableT>> ORDER;
+            select_limit_member<select_from<SelectT, TableT>> LIMIT;
 
         private:
             const SelectT &select;
@@ -295,7 +345,7 @@ namespace sqlite3pp {
         class select_where : public select_core<select_where<SelectT, ExpressionT>> {
         public:
             constexpr select_where(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
-                : GROUP{*this}, ORDER{*this}, select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
+                : GROUP{*this}, ORDER{*this}, LIMIT{*this}, select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -307,6 +357,7 @@ namespace sqlite3pp {
 
             select_group_member<select_where<SelectT, ExpressionT>> GROUP;
             select_order_member<select_where<SelectT, ExpressionT>> ORDER;
+            select_limit_member<select_where<SelectT, ExpressionT>> LIMIT;
 
         private:
             const SelectT &select;
@@ -317,7 +368,7 @@ namespace sqlite3pp {
         class select_group_by : public select_core<select_group_by<SelectT, ExpressionT...>> {
         public:
             constexpr select_group_by(const select_base<SelectT> &select, const expression<ExpressionT> & ... expressions)
-                : HAVING{*this}, ORDER{*this}, select{static_cast<const SelectT &>(select)}, expressions{expressions...} {}
+                : HAVING{*this}, ORDER{*this}, LIMIT{*this}, select{static_cast<const SelectT &>(select)}, expressions{expressions...} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -330,6 +381,7 @@ namespace sqlite3pp {
 
             select_having_member<select_group_by<SelectT, ExpressionT...>> HAVING;
             select_order_member<select_group_by<SelectT, ExpressionT...>> ORDER;
+            select_limit_member<select_group_by<SelectT, ExpressionT...>> LIMIT;
 
         private:
             template <std::size_t ... ExpressionIndex>
@@ -346,7 +398,7 @@ namespace sqlite3pp {
         class select_having : public select_core<select_having<SelectT, ExpressionT>> {
         public:
             constexpr select_having(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
-                : ORDER{*this}, select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
+                : ORDER{*this}, LIMIT{*this}, select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -357,10 +409,40 @@ namespace sqlite3pp {
             }
 
             select_order_member<select_having<SelectT, ExpressionT>> ORDER;
+            select_limit_member<select_having<SelectT, ExpressionT>> LIMIT;
 
         private:
             const SelectT &select;
             const ExpressionT &expression;
+        };
+
+        template <class SelectT, class ExpressionT>
+        class select_limit : public select_core<select_limit<SelectT, ExpressionT>> {
+        public:
+            constexpr select_limit(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
+                : select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                        select.to_str(),
+                        sql_strings::LIMIT,
+                        expression.to_str()
+                );
+            }
+
+        private:
+            const SelectT &select;
+            const ExpressionT &expression;
+        };
+
+        template <class SelectT, class StartRangeExpressionT, class EndRangeExpressionT>
+        class select_limit_range {
+
+        };
+
+        template <class SelectT, class ExpressionT>
+        class select_limit_offset {
+
         };
     }
 }

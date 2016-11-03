@@ -165,3 +165,53 @@ TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY statement with col
 
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age"));
 }
+
+TEST_CASE("Can use SELECT FROM LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .LIMIT(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person LIMIT 100"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .LIMIT(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 LIMIT 100"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .LIMIT(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name LIMIT 100"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .LIMIT(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 LIMIT 100"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age)
+                                .LIMIT(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age LIMIT 100"));
+}

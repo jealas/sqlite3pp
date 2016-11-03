@@ -93,7 +93,6 @@ namespace sqlite3pp {
 
         template <class SelectT>
         struct select_core : public select_base<SelectT> {
-            select_order_member<SelectT> ORDER{*this};
         };
 
         struct select_all_member {
@@ -273,7 +272,7 @@ namespace sqlite3pp {
         class select_from : public select_core<select_from<SelectT, TableT>> {
         public:
             constexpr select_from(const select_base<SelectT> &select, const table_base<TableT> &table)
-                : WHERE{*this}, GROUP{*this}, select{static_cast<const SelectT &>(select)}, table{static_cast<const TableT &>(table)} {}
+                : WHERE{*this}, GROUP{*this}, ORDER{*this}, select{static_cast<const SelectT &>(select)}, table{static_cast<const TableT &>(table)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -285,6 +284,7 @@ namespace sqlite3pp {
 
             select_where_member<select_from<SelectT, TableT>> WHERE;
             select_group_member<select_from<SelectT, TableT>> GROUP;
+            select_order_member<select_from<SelectT, TableT>> ORDER;
 
         private:
             const SelectT &select;
@@ -295,7 +295,7 @@ namespace sqlite3pp {
         class select_where : public select_core<select_where<SelectT, ExpressionT>> {
         public:
             constexpr select_where(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
-                : GROUP{*this}, select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
+                : GROUP{*this}, ORDER{*this}, select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -306,6 +306,7 @@ namespace sqlite3pp {
             }
 
             select_group_member<select_where<SelectT, ExpressionT>> GROUP;
+            select_order_member<select_where<SelectT, ExpressionT>> ORDER;
 
         private:
             const SelectT &select;
@@ -316,7 +317,7 @@ namespace sqlite3pp {
         class select_group_by : public select_core<select_group_by<SelectT, ExpressionT...>> {
         public:
             constexpr select_group_by(const select_base<SelectT> &select, const expression<ExpressionT> & ... expressions)
-                : HAVING{*this}, select{static_cast<const SelectT &>(select)}, expressions{expressions...} {}
+                : HAVING{*this}, ORDER{*this}, select{static_cast<const SelectT &>(select)}, expressions{expressions...} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -328,6 +329,7 @@ namespace sqlite3pp {
             }
 
             select_having_member<select_group_by<SelectT, ExpressionT...>> HAVING;
+            select_order_member<select_group_by<SelectT, ExpressionT...>> ORDER;
 
         private:
             template <std::size_t ... ExpressionIndex>
@@ -344,7 +346,7 @@ namespace sqlite3pp {
         class select_having : public select_core<select_having<SelectT, ExpressionT>> {
         public:
             constexpr select_having(const select_base<SelectT> &select, const expression<ExpressionT> &expression)
-                : select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
+                : ORDER{*this}, select{static_cast<const SelectT &>(select)}, expression{static_cast<const ExpressionT &>(expression)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -353,6 +355,8 @@ namespace sqlite3pp {
                         expression.to_str()
                 );
             }
+
+            select_order_member<select_having<SelectT, ExpressionT>> ORDER;
 
         private:
             const SelectT &select;

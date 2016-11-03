@@ -138,19 +138,19 @@ TEST_CASE("Can use SELECT FROM ORDER BY statement with columns.", "[test-select-
 
 TEST_CASE("Can use SELECT FROM WHERE ORDER BY statement with columns.", "[test-select-statement]") {
     constexpr auto select_str = SELECT(age, name)
-            .FROM(person)
-            .WHERE(age > I(50))
-            .ORDER.BY(age).to_str();
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .ORDER.BY(age).to_str();
 
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age"));
 }
 
 TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY statement with columns.", "[test-select-statement]") {
     constexpr auto select_str = SELECT(age, name)
-            .FROM(person)
-            .WHERE(age > I(50))
-            .GROUP.BY(name)
-            .ORDER.BY(age).to_str();
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .ORDER.BY(age).to_str();
 
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age"));
 }

@@ -320,3 +320,155 @@ TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY LIMIT OFFSET state
 
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age LIMIT 10 OFFSET 100"));
 }
+
+//
+
+TEST_CASE("Can use SELECT FROM ORDER BY ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .ORDER.BY(age.ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .ORDER.BY(age.ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .ORDER.BY(age.ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY ASC LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.ASC())
+                                .LIMIT(I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age ASC LIMIT 10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY ASC LIMIT range statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.ASC())
+                                .LIMIT(I(100), I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age ASC LIMIT 100,10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY ASC LIMIT OFFSET statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.ASC())
+                                .LIMIT(I(10))
+                                .OFFSET(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age ASC LIMIT 10 OFFSET 100"));
+}
+
+TEST_CASE("Can use SELECT FROM ORDER BY DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .ORDER.BY(age.DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .ORDER.BY(age.DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .ORDER.BY(age.DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY DESC LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.DESC())
+                                .LIMIT(I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age DESC LIMIT 10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY DESC LIMIT range statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.DESC())
+                                .LIMIT(I(100), I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age DESC LIMIT 100,10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY DESC LIMIT OFFSET statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.DESC())
+                                .LIMIT(I(10))
+                                .OFFSET(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age DESC LIMIT 10 OFFSET 100"));
+}

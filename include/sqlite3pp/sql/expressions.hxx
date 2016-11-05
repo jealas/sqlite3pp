@@ -270,5 +270,44 @@ namespace sqlite3pp {
             const ExpressionT &expression;
         };
 
+        template <class T>
+        struct ordering_term_base : public expression<T> {
+            constexpr auto to_str() const { return static_cast<const T *>(this)->to_str(); }
+        };
+
+        template <class ExpressionT>
+        class asc_expression : public ordering_term_base<asc_expression<ExpressionT>> {
+        public:
+            constexpr asc_expression(const expression<ExpressionT> &expression)
+                : expression{static_cast<const ExpressionT &>(expression)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                        expression.to_str(),
+                        sql_strings::ASC
+                );
+            }
+
+        private:
+            const ExpressionT &expression;
+        };
+
+        template <class ExpressionT>
+        class desc_expression : public ordering_term_base<desc_expression<ExpressionT>> {
+        public:
+            constexpr desc_expression(const expression<ExpressionT> &expression)
+                : expression{static_cast<const ExpressionT &>(expression)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                        expression.to_str(),
+                        sql_strings::DESC
+                );
+            }
+
+        private:
+            const ExpressionT &expression;
+        };
+
     }
 }

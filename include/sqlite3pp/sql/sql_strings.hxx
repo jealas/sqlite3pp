@@ -74,6 +74,8 @@ namespace sqlite3pp {
             static constexpr auto ORDER = make_constexpr_string("ORDER");
             static constexpr auto LIMIT = make_constexpr_string("LIMIT");
             static constexpr auto OFFSET = make_constexpr_string("OFFSET");
+            static constexpr auto ASC = make_constexpr_string("ASC");
+            static constexpr auto DESC = make_constexpr_string("DESC");
 
             static constexpr auto NULL_STR = make_constexpr_string("NULL");
             static constexpr auto INTEGER = make_constexpr_string("INTEGER");

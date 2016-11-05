@@ -18,8 +18,45 @@ namespace sqlite3pp {
             constexpr operator const T&() const { return *static_cast<const T *>(this); }
         };
 
+        template <class T>
+        struct column_expression;
+
+        template <class ColumnExpressionT>
+        class desc_expression_member {
+        public:
+            constexpr desc_expression_member(const column_expression<ColumnExpressionT> &column_expression)
+                : column_expression{static_cast<const ColumnExpressionT &>(column_expression)} {}
+
+            constexpr auto operator()() const {
+                return desc_expression<ColumnExpressionT>{column_expression};
+            }
+
+        private:
+            const ColumnExpressionT &column_expression;
+        };
+
+        template <class ColumnExpressionT>
+        class asc_expression_member {
+        public:
+            constexpr asc_expression_member(const column_expression<ColumnExpressionT> &column_expression)
+                    : column_expression{static_cast<const ColumnExpressionT &>(column_expression)} {}
+
+            constexpr auto operator()() const {
+                return asc_expression<ColumnExpressionT>{column_expression};
+            }
+
+        private:
+            const ColumnExpressionT &column_expression;
+        };
+
+        template <class T>
+        struct column_expression : public expression<T>, public column_base<T> {
+            desc_expression_member<T> DESC{*this};
+            asc_expression_member<T> ASC{*this};
+        };
+
         template<template <class> class MemberT, column_type ColumnType, class NameType>
-        class column_t : public expression<column_t<MemberT, ColumnType, NameType>>, public column_base<column_t<MemberT, ColumnType, NameType>> {
+        class column_t : public column_expression<column_t<MemberT, ColumnType, NameType>> {
         public:
             template <class T>
             using member_t = MemberT<T>;

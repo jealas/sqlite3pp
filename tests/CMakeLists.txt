@@ -7,6 +7,7 @@ add_executable(sqlite3pp_tests
         # sql
         test_sql_column.cxx
         test_sql_expressions.cxx
+        test_select_statement.cxx
 )
 
 target_link_libraries(sqlite3pp_tests

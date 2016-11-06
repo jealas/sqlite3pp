@@ -48,10 +48,7 @@ namespace sqlite3pp {
         class not_between_expression;
 
         template <class ExpressionT>
-        class expression : public serializable<ExpressionT> {
-        public:
-            constexpr expression() : IS{*this}, NOT{*this} {}
-
+        struct expression : public serializable<ExpressionT> {
             template <class OtherExpressionT>
             constexpr auto AND(const expression<OtherExpressionT> &other_expression) const {
                 return binary_operator_expression<ExpressionT, decltype(AND_STR), OtherExpressionT>{*this, AND_STR, other_expression};
@@ -87,9 +84,8 @@ namespace sqlite3pp {
                 return between_expression<ExpressionT, StartExpressionT, EndExpressionT>{*this, start, end};
             }
 
-        public:
-            is_expression_member<ExpressionT> IS;
-            not_expression_member<ExpressionT> NOT;
+            is_expression_member<ExpressionT> IS{*this};
+            not_expression_member<ExpressionT> NOT{*this};
         };
 
         // Full expression types.
@@ -258,6 +254,59 @@ namespace sqlite3pp {
         private:
             const ExpressionT &value_expression;
             DataTypeT data_type;
+        };
+
+        template <class ExpressionT>
+        class count_expression : public expression<count_expression<ExpressionT>> {
+        public:
+            constexpr count_expression(const expression<ExpressionT> &value_expression)
+                    : expression{static_cast<const ExpressionT &>(value_expression)} {}
+
+            constexpr auto to_str() const {
+                return join_constexpr_strings(sql_strings::COUNT, sql_strings::OPEN_PARENTHESIS, expression.to_str(), sql_strings::CLOSE_PARENTHESIS);
+            }
+
+        private:
+            const ExpressionT &expression;
+        };
+
+        template <class T>
+        struct ordering_term_base : public expression<T> {
+            constexpr auto to_str() const { return static_cast<const T *>(this)->to_str(); }
+        };
+
+        template <class ExpressionT>
+        class asc_expression : public ordering_term_base<asc_expression<ExpressionT>> {
+        public:
+            constexpr asc_expression(const expression<ExpressionT> &expression)
+                : expression{static_cast<const ExpressionT &>(expression)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                        expression.to_str(),
+                        sql_strings::ASC
+                );
+            }
+
+        private:
+            const ExpressionT &expression;
+        };
+
+        template <class ExpressionT>
+        class desc_expression : public ordering_term_base<desc_expression<ExpressionT>> {
+        public:
+            constexpr desc_expression(const expression<ExpressionT> &expression)
+                : expression{static_cast<const ExpressionT &>(expression)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                        expression.to_str(),
+                        sql_strings::DESC
+                );
+            }
+
+        private:
+            const ExpressionT &expression;
         };
 
     }

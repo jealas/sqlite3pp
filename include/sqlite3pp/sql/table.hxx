@@ -7,7 +7,6 @@
 #include "sqlite3pp/sql/column.hxx"
 #include "sqlite3pp/sql/sql_strings.hxx"
 #include "sqlite3pp/sql/column_set.hxx"
-#include "sqlite3pp/sql/all.hxx"
 
 
 namespace sqlite3pp {
@@ -29,19 +28,6 @@ namespace sqlite3pp {
 
             constexpr auto get_name() const { return name; }
             constexpr auto get_columns() const { return columns; }
-
-            // Select
-            constexpr auto select() const;
-            constexpr auto select(all_t) const;
-
-            template <class ... ColumnTypes>
-            constexpr auto select(const column_base<ColumnTypes> & ... columns) const;
-
-            // Insert
-
-            // Update
-
-            // Join
 
         private:
             const TableNameT name;

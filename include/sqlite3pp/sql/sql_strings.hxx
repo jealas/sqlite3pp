@@ -76,6 +76,10 @@ namespace sqlite3pp {
             static constexpr auto OFFSET = make_constexpr_string("OFFSET");
             static constexpr auto ASC = make_constexpr_string("ASC");
             static constexpr auto DESC = make_constexpr_string("DESC");
+            static constexpr auto COLLATE = make_constexpr_string("COLLATE");
+            static constexpr auto BYTE = make_constexpr_string("BYTE");
+            static constexpr auto NOCASE = make_constexpr_string("NOCASE");
+            static constexpr auto RTRIM = make_constexpr_string("RTRIM");
 
             static constexpr auto NULL_STR = make_constexpr_string("NULL");
             static constexpr auto INTEGER = make_constexpr_string("INTEGER");

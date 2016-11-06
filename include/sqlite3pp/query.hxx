@@ -69,6 +69,10 @@ namespace sqlite3pp {
 
         static constexpr select_member SELECT{};
 
+        static constexpr collate_byte BYTE{};
+        static constexpr collate_nocase NOCASE{};
+        static constexpr collate_rtrim RTRIM{};
+
 }
 
 // Helper macros for literal expressions.

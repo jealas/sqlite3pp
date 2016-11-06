@@ -321,8 +321,6 @@ TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY LIMIT OFFSET state
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age LIMIT 10 OFFSET 100"));
 }
 
-//
-
 TEST_CASE("Can use SELECT FROM ORDER BY ASC statement with columns.", "[test-select-statement]") {
     constexpr auto select_str = SELECT(age, name)
                                 .FROM(person)
@@ -471,4 +469,554 @@ TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY DESC LIMIT OFFSET 
                                 .OFFSET(I(100)).to_str();
 
     REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age DESC LIMIT 10 OFFSET 100"));
+}
+
+TEST_CASE("Can use SELECT FROM ORDER BY COLLATE BYTE ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .ORDER.BY(age.COLLATE(BYTE).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age COLLATE BYTE ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY COLLATE BYTE ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .ORDER.BY(age.COLLATE(BYTE).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age COLLATE BYTE ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY COLLATE BYTE ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .ORDER.BY(age.COLLATE(BYTE).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age COLLATE BYTE ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE BYTE ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(BYTE).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE BYTE ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE BYTE ASC LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(BYTE).ASC())
+                                .LIMIT(I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE BYTE ASC LIMIT 10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE BYTE ASC LIMIT range statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(BYTE).ASC())
+                                .LIMIT(I(100), I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE BYTE ASC LIMIT 100,10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE BYTE ASC LIMIT OFFSET statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(BYTE).ASC())
+                                .LIMIT(I(10))
+                                .OFFSET(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE BYTE ASC LIMIT 10 OFFSET 100"));
+}
+
+TEST_CASE("Can use SELECT FROM ORDER BY COLLATE BYTE DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .ORDER.BY(age.COLLATE(BYTE).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age COLLATE BYTE DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY COLLATE BYTE DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .ORDER.BY(age.COLLATE(BYTE).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age COLLATE BYTE DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY COLLATE BYTE DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .ORDER.BY(age.COLLATE(BYTE).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age COLLATE BYTE DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE BYTE DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(BYTE).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE BYTE DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE BYTE DESC LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(BYTE).DESC())
+                                .LIMIT(I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE BYTE DESC LIMIT 10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE BYTE DESC LIMIT range statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(BYTE).DESC())
+                                .LIMIT(I(100), I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE BYTE DESC LIMIT 100,10"));
+}
+
+TEST_CASE("Can use SELECT FROM ORDER BY COLLATE NOCASE ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .ORDER.BY(age.COLLATE(NOCASE).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age COLLATE NOCASE ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY COLLATE NOCASE ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .ORDER.BY(age.COLLATE(NOCASE).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age COLLATE NOCASE ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY COLLATE NOCASE ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .ORDER.BY(age.COLLATE(NOCASE).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age COLLATE NOCASE ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE NOCASE ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(NOCASE).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE NOCASE ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE NOCASE ASC LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(NOCASE).ASC())
+                                .LIMIT(I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE NOCASE ASC LIMIT 10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE NOCASE ASC LIMIT range statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(NOCASE).ASC())
+                                .LIMIT(I(100), I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE NOCASE ASC LIMIT 100,10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE NOCASE ASC LIMIT OFFSET statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(NOCASE).ASC())
+                                .LIMIT(I(10))
+                                .OFFSET(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE NOCASE ASC LIMIT 10 OFFSET 100"));
+}
+
+TEST_CASE("Can use SELECT FROM ORDER BY COLLATE NOCASE DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .ORDER.BY(age.COLLATE(NOCASE).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age COLLATE NOCASE DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY COLLATE NOCASE DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .ORDER.BY(age.COLLATE(NOCASE).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age COLLATE NOCASE DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY COLLATE NOCASE DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .ORDER.BY(age.COLLATE(NOCASE).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age COLLATE NOCASE DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE NOCASE DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(NOCASE).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE NOCASE DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE NOCASE DESC LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(NOCASE).DESC())
+                                .LIMIT(I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE NOCASE DESC LIMIT 10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE NOCASE DESC LIMIT range statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(NOCASE).DESC())
+                                .LIMIT(I(100), I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE NOCASE DESC LIMIT 100,10"));
+}
+
+TEST_CASE("Can use SELECT FROM ORDER BY COLLATE RTRIM ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .ORDER.BY(age.COLLATE(RTRIM).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age COLLATE RTRIM ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY COLLATE RTRIM ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .ORDER.BY(age.COLLATE(RTRIM).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age COLLATE RTRIM ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY COLLATE RTRIM ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .ORDER.BY(age.COLLATE(RTRIM).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age COLLATE RTRIM ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE RTRIM ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(RTRIM).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE RTRIM ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE RTRIM ASC LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(RTRIM).ASC())
+                                .LIMIT(I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE RTRIM ASC LIMIT 10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE RTRIM ASC LIMIT range statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(RTRIM).ASC())
+                                .LIMIT(I(100), I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE RTRIM ASC LIMIT 100,10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE RTRIM ASC LIMIT OFFSET statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(RTRIM).ASC())
+                                .LIMIT(I(10))
+                                .OFFSET(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE RTRIM ASC LIMIT 10 OFFSET 100"));
+}
+
+TEST_CASE("Can use SELECT FROM ORDER BY COLLATE RTRIM DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .ORDER.BY(age.COLLATE(RTRIM).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age COLLATE RTRIM DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY COLLATE RTRIM DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .ORDER.BY(age.COLLATE(RTRIM).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age COLLATE RTRIM DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY COLLATE RTRIM DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .ORDER.BY(age.COLLATE(RTRIM).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age COLLATE RTRIM DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE RTRIM DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(RTRIM).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE RTRIM DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE RTRIM DESC LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(RTRIM).DESC())
+                                .LIMIT(I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE RTRIM DESC LIMIT 10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE RTRIM DESC LIMIT range statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+                                .FROM(person)
+                                .WHERE(age > I(50))
+                                .GROUP.BY(name)
+                                .HAVING(COUNT(age) > I(2))
+                                .ORDER.BY(age.COLLATE(RTRIM).DESC())
+                                .LIMIT(I(100), I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE RTRIM DESC LIMIT 100,10"));
+}
+
+namespace { constexpr auto MYCOLLATION = make_custom_collation("MYCOLLATION"); }
+
+TEST_CASE("Can use SELECT FROM ORDER BY COLLATE MYCOLLATION ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .ORDER.BY(age.COLLATE(MYCOLLATION).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age COLLATE MYCOLLATION ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY COLLATE MYCOLLATION ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .ORDER.BY(age.COLLATE(MYCOLLATION).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age COLLATE MYCOLLATION ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY COLLATE MYCOLLATION ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .ORDER.BY(age.COLLATE(MYCOLLATION).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age COLLATE MYCOLLATION ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE MYCOLLATION ASC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .HAVING(COUNT(age) > I(2))
+            .ORDER.BY(age.COLLATE(MYCOLLATION).ASC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE MYCOLLATION ASC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE MYCOLLATION ASC LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .HAVING(COUNT(age) > I(2))
+            .ORDER.BY(age.COLLATE(MYCOLLATION).ASC())
+            .LIMIT(I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE MYCOLLATION ASC LIMIT 10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE MYCOLLATION ASC LIMIT range statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .HAVING(COUNT(age) > I(2))
+            .ORDER.BY(age.COLLATE(MYCOLLATION).ASC())
+            .LIMIT(I(100), I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE MYCOLLATION ASC LIMIT 100,10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE MYCOLLATION ASC LIMIT OFFSET statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .HAVING(COUNT(age) > I(2))
+            .ORDER.BY(age.COLLATE(MYCOLLATION).ASC())
+            .LIMIT(I(10))
+            .OFFSET(I(100)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE MYCOLLATION ASC LIMIT 10 OFFSET 100"));
+}
+
+TEST_CASE("Can use SELECT FROM ORDER BY COLLATE MYCOLLATION DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .ORDER.BY(age.COLLATE(MYCOLLATION).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person ORDER BY age COLLATE MYCOLLATION DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE ORDER BY COLLATE MYCOLLATION DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .ORDER.BY(age.COLLATE(MYCOLLATION).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 ORDER BY age COLLATE MYCOLLATION DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY ORDER BY COLLATE MYCOLLATION DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .ORDER.BY(age.COLLATE(MYCOLLATION).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name ORDER BY age COLLATE MYCOLLATION DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE MYCOLLATION DESC statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .HAVING(COUNT(age) > I(2))
+            .ORDER.BY(age.COLLATE(MYCOLLATION).DESC()).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE MYCOLLATION DESC"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE MYCOLLATION DESC LIMIT statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .HAVING(COUNT(age) > I(2))
+            .ORDER.BY(age.COLLATE(MYCOLLATION).DESC())
+            .LIMIT(I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE MYCOLLATION DESC LIMIT 10"));
+}
+
+TEST_CASE("Can use SELECT FROM WHERE GROUP BY HAVING ORDER BY COLLATE MYCOLLATION DESC LIMIT range statement with columns.", "[test-select-statement]") {
+    constexpr auto select_str = SELECT(age, name)
+            .FROM(person)
+            .WHERE(age > I(50))
+            .GROUP.BY(name)
+            .HAVING(COUNT(age) > I(2))
+            .ORDER.BY(age.COLLATE(MYCOLLATION).DESC())
+            .LIMIT(I(100), I(10)).to_str();
+
+    REQUIRE(std::equal(select_str.begin(), select_str.end(), "SELECT age,name FROM person WHERE age>50 GROUP BY name HAVING COUNT(age)>2 ORDER BY age COLLATE MYCOLLATION DESC LIMIT 100,10"));
 }

@@ -12,14 +12,14 @@ namespace {
         T name;
     };
 
-    static constexpr auto name = column<name_column_member, column_type::TEXT>("name");
+    static constexpr auto name = column<name_column_member>("name", TEXT);
 
     template <class T>
     struct age_column_member {
         T age;
     };
 
-    static constexpr auto age = column<age_column_member, column_type::INTEGER>("age");
+    static constexpr auto age = column<age_column_member>("age", INTEGER);
 
     static constexpr auto person = table("person", age, name);
 }

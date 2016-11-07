@@ -82,16 +82,28 @@ namespace sqlite3pp {
             static constexpr auto RTRIM = make_constexpr_string("RTRIM");
 
             static constexpr auto NULL_STR = make_constexpr_string("NULL");
+
             static constexpr auto INTEGER = make_constexpr_string("INTEGER");
             static constexpr auto INT = make_constexpr_string("INT");
+            static constexpr auto TINYINT = make_constexpr_string("TINYINT");
+            static constexpr auto SMALLINT = make_constexpr_string("SMALLINT");
+            static constexpr auto MEDIUMINT = make_constexpr_string("MEDIUMINT");
+            static constexpr auto BIGINT = make_constexpr_string("BIGINT");
+
             static constexpr auto REAL = make_constexpr_string("REAL");
             static constexpr auto DOUBLE = make_constexpr_string("DOUBLE");
             static constexpr auto FLOAT = make_constexpr_string("FLOAT");
+
             static constexpr auto TEXT = make_constexpr_string("TEXT");
             static constexpr auto CHAR = make_constexpr_string("CHAR");
             static constexpr auto CLOB = make_constexpr_string("CLOB");
             static constexpr auto VARCHAR = make_constexpr_string("VARCHAR");
+            static constexpr auto CHARACTER = make_constexpr_string("CHARACTER");
+            static constexpr auto NCHAR = make_constexpr_string("NCHAR");
+            static constexpr auto NVARCHAR = make_constexpr_string("NVARCHAR");
+
             static constexpr auto BLOB = make_constexpr_string("BLOB");
+
             static constexpr auto NUMERIC = make_constexpr_string("NUMERIC");
             static constexpr auto DECIMAL = make_constexpr_string("DECIMAL");
             static constexpr auto BOOLEAN = make_constexpr_string("BOOLEAN");

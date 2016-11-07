@@ -18,6 +18,22 @@ namespace sqlite3pp {
             constexpr auto to_str() const { return sql_strings::INT; }
         };
 
+        struct tinyint_type : public data_type<tinyint_type> {
+            constexpr auto to_str() const { return sql_strings::TINYINT; }
+        };
+
+        struct smallint_type : public data_type<smallint_type> {
+            constexpr auto to_str() const { return sql_strings::SMALLINT; }
+        };
+
+        struct mediumint_type : public data_type<mediumint_type> {
+            constexpr auto to_str() const { return sql_strings::MEDIUMINT; }
+        };
+
+        struct bigint_type : public data_type<bigint_type> {
+            constexpr auto to_str() const { return sql_strings::BIGINT; }
+        };
+
         struct real_type : public data_type<real_type> {
             constexpr auto to_str() const { return sql_strings::REAL; }
         };

@@ -6,7 +6,6 @@
 
 #include "sqlite3pp/sql/column.hxx"
 #include "sqlite3pp/sql/sql_strings.hxx"
-#include "sqlite3pp/sql/column_set.hxx"
 
 
 namespace sqlite3pp {
@@ -15,9 +14,6 @@ namespace sqlite3pp {
         template<class T>
         struct table_base {
             constexpr auto get_name() const { return static_cast<const T *>(this)->get_name(); }
-            constexpr auto get_columns() const { return static_cast<const T *>(this)->get_columns(); }
-            constexpr operator T&() { return *static_cast<T *>(this); }
-            constexpr operator const T&() const { return *static_cast<const T *>(this); }
         };
 
         template<class TableNameT, class ... Columns>
@@ -27,11 +23,10 @@ namespace sqlite3pp {
                     : Columns::template member_t<Columns>{columns, }..., name{name}, columns{columns...} { }
 
             constexpr auto get_name() const { return name; }
-            constexpr auto get_columns() const { return columns; }
 
         private:
-            const TableNameT name;
-            const column_set<Columns...> columns;
+            TableNameT name;
+            std::tuple<Columns...> columns;
         };
 
     }

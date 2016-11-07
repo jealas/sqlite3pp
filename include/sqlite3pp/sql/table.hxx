@@ -20,13 +20,13 @@ namespace sqlite3pp {
         class table_t : public table_base<table_t<TableNameT, Columns...>>, public Columns::template member_t<Columns>... {
         public:
             constexpr table_t(const detail::constexpr_string_base<TableNameT> &name, const column_base<Columns> &... columns)
-                    : Columns::template member_t<Columns>{columns, }..., name{name}, columns{columns...} { }
+                    : Columns::template member_t<Columns>{columns}..., __name{name}, __columns{columns...} { }
 
-            constexpr auto get_name() const { return name; }
+            constexpr auto get_name() const { return __name; }
 
         private:
-            TableNameT name;
-            std::tuple<Columns...> columns;
+            TableNameT __name;
+            std::tuple<Columns...> __columns;
         };
 
     }

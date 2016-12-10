@@ -16,17 +16,16 @@ namespace sqlite3pp {
             constexpr auto get_name() const { return static_cast<const T *>(this)->get_name(); }
         };
 
-        template<class TableNameT, class ... Columns>
-        class table_t : public table_base<table_t<TableNameT, Columns...>>, public Columns::template member_t<Columns>... {
+        template<class TableT, class TableNameT>
+        class table_t : public TableT, public table_base<table_t<TableT, TableNameT>> {
         public:
-            constexpr table_t(const detail::constexpr_string_base<TableNameT> &name, const column_base<Columns> &... columns)
-                    : Columns::template member_t<Columns>{columns}..., __name{name}, __columns{columns...} { }
+            constexpr table_t(const detail::constexpr_string_base<TableNameT> &name)
+                : __name{name} { }
 
             constexpr auto get_name() const { return __name; }
 
         private:
             TableNameT __name;
-            std::tuple<Columns...> __columns;
         };
 
     }

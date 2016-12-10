@@ -125,13 +125,10 @@ namespace sqlite3pp {
             asc_expression_member<ColumnExpressionT> ASC{*this};
         };
 
-        template<template <class> class MemberT, class ColumnType, class NameType>
-        class column_t : public column_expression<column_t<MemberT, ColumnType, NameType>> {
+        template<class NameType, class ColumnType>
+        class column_t : public column_expression<column_t<NameType, ColumnType>> {
         public:
-            template <class T>
-            using member_t = MemberT<T>;
-
-            explicit constexpr column_t(const detail::constexpr_string_base<NameType> &name, const data_type<ColumnType> &column_type)
+            constexpr column_t(const detail::constexpr_string_base<NameType> &name, const data_type<ColumnType> &column_type)
                     : COLLATE{*this}, name{name}, column_type{static_cast<const ColumnType &>(column_type)} {}
 
             constexpr auto to_str() const { return name; }
@@ -139,7 +136,7 @@ namespace sqlite3pp {
             constexpr auto get_name() const { return name; }
             constexpr auto get_type() const { return column_type; }
 
-            collate_expression_member<column_t<MemberT, ColumnType, NameType>> COLLATE;
+            collate_expression_member<column_t<NameType, ColumnType>> COLLATE;
 
         private:
             NameType name;

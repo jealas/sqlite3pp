@@ -54,18 +54,18 @@ namespace sqlite3pp {
     using namespace sqlite3pp::sql::operators;
 
     // Table and Column APIs.
-    template <template <class> class MemberT, class ColumnType, std::size_t NameLength>
+    template <std::size_t NameLength, class ColumnType>
     constexpr auto column(const char (&name)[NameLength], const data_type<ColumnType> &column_type) {
         auto name_str = detail::make_constexpr_string(name);
 
-        return column_t<MemberT, ColumnType, decltype(name_str)>{name_str, column_type};
+        return column_t<decltype(name_str), ColumnType>{name_str, column_type};
     }
 
-    template<std::size_t TableNameLength, class ... ColumnTypes>
-    constexpr auto table(const char (&name)[TableNameLength], const column_base<ColumnTypes> &... columns) {
+    template<class TableT, std::size_t TableNameLength>
+    constexpr auto table(const char (&name)[TableNameLength]) {
         auto name_str = detail::make_constexpr_string(name);
 
-        return table_t<decltype(name_str), ColumnTypes...>{name_str, columns...};
+        return table_t<TableT, decltype(name_str)>{name_str};
     }
 
     // Query API.

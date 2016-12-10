@@ -2,6 +2,7 @@
 
 #include <sqlite3.h>
 
+#define SQLITE_OK_LOAD_PERMANENTLY 1
 
 namespace sqlite3pp {
     namespace sqlite3 {

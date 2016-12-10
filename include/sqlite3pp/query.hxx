@@ -8,6 +8,7 @@
 #include "sqlite3pp/sql/table.hxx"
 #include "sqlite3pp/detail/constexpr_string.hxx"
 #include "sqlite3pp/sql/select_statement.hxx"
+#include "sqlite3pp/sql/insert_statement.hxx"
 
 namespace { using namespace sqlite3pp::sql; }
 
@@ -48,6 +49,7 @@ namespace sqlite3pp {
     #ifdef NULL
     #undef NULL
     #endif
+
     static constexpr null_expression NULL{};
 
     // Expression operators.
@@ -72,6 +74,7 @@ namespace sqlite3pp {
     static constexpr all_t ALL{};
 
     static constexpr select_member SELECT{};
+    static constexpr insert_member INSERT{};
 
     static constexpr collate_byte BYTE{};
     static constexpr collate_nocase NOCASE{};

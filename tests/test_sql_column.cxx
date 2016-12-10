@@ -13,7 +13,7 @@ namespace {
         T name;
     };
 
-    static constexpr auto name_column = column<name_column_member>("name", TEXT);
+    static constexpr auto name_column = column("name");
 }
 
 

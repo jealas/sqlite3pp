@@ -7,13 +7,18 @@ namespace {
 
     using namespace sqlite3pp;
 
+    template <class Name, class Age>
     struct person_table {
-        static constexpr auto name = column("name", TEXT);
-        static constexpr auto age = column("age", INTEGER);
+        Name name;
+        Age age;
     };
 
-    static constexpr auto person = table<person_table>("person");
+    static constexpr auto age = column("age");
+    static constexpr auto name = column("name");
+
+    constexpr auto person = table<person_table>("person", name, age);
 }
+
 
 TEST_CASE("Can use SELECT statement with columns.", "[test-select-statement]") {
     constexpr auto select_str = SELECT(age, name).to_str();

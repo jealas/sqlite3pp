@@ -125,22 +125,41 @@ namespace sqlite3pp {
             asc_expression_member<ColumnExpressionT> ASC{*this};
         };
 
-        template<class NameType, class ColumnType>
-        class column_t : public column_expression<column_t<NameType, ColumnType>> {
+        template <class TableNameT, class ColumnT>
+        class fully_qualified_column_t : public column_expression<fully_qualified_column_t<TableNameT, ColumnT>> {
         public:
-            constexpr column_t(const detail::constexpr_string_base<NameType> &name, const data_type<ColumnType> &column_type)
-                    : COLLATE{*this}, name{name}, column_type{static_cast<const ColumnType &>(column_type)} {}
+            constexpr fully_qualified_column_t(const detail::constexpr_string_base<TableNameT> &table_name, const column_base<ColumnT> &column)
+                    : COLLATE{*this}, table_name{static_cast<const TableNameT &>(table_name)}, column{static_cast<const ColumnT &>(column)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::DOT.join(
+                    table_name,
+                    column.get_name()
+                );
+            }
+
+            collate_expression_member<fully_qualified_column_t<TableNameT, ColumnT>> COLLATE;
+
+        private:
+            const TableNameT &table_name;
+            const ColumnT &column;
+        };
+
+
+        template<class NameType>
+        class column_t : public column_expression<column_t<NameType>> {
+        public:
+            constexpr column_t(const detail::constexpr_string_base<NameType> &name)
+                    : COLLATE{*this}, name{name} {}
 
             constexpr auto to_str() const { return name; }
 
             constexpr auto get_name() const { return name; }
-            constexpr auto get_type() const { return column_type; }
 
-            collate_expression_member<column_t<NameType, ColumnType>> COLLATE;
+            collate_expression_member<column_t<NameType>> COLLATE;
 
         private:
             NameType name;
-            ColumnType column_type;
         };
 
     }

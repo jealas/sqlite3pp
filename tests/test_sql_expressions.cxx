@@ -15,9 +15,10 @@ namespace {
         Age age;
     };
 
-    constexpr auto person = table<person_table>("person", column("name", TEXT), column("age", INTEGER));
+    static constexpr auto age_column = column("age");
+    static constexpr auto name_column = column("name");
 
-    person.name, person.age
+    constexpr auto person = table<person_table>("person", name_column, age_column);
 }
 
 

@@ -6,7 +6,6 @@
 
 #include "sqlite3pp/sql/column.hxx"
 #include "sqlite3pp/sql/sql_strings.hxx"
-#include "sqlite3pp/sql/column_set.hxx"
 
 
 namespace sqlite3pp {
@@ -15,23 +14,18 @@ namespace sqlite3pp {
         template<class T>
         struct table_base {
             constexpr auto get_name() const { return static_cast<const T *>(this)->get_name(); }
-            constexpr auto get_columns() const { return static_cast<const T *>(this)->get_columns(); }
-            constexpr operator T&() { return *static_cast<T *>(this); }
-            constexpr operator const T&() const { return *static_cast<const T *>(this); }
         };
 
-        template<class TableNameT, class ... Columns>
-        class table_t : public table_base<table_t<TableNameT, Columns...>>, public Columns::template member_t<Columns>... {
+        template<template <class ...> class TableT, class TableNameT, class ... ColumnT>
+        class table_t : public TableT<fully_qualified_column_t<TableNameT, ColumnT>...>, public table_base<table_t<TableT, TableNameT, ColumnT...>> {
         public:
-            constexpr table_t(const detail::constexpr_string_base<TableNameT> &name, const column_base<Columns> &... columns)
-                    : Columns::template member_t<Columns>{columns, }..., name{name}, columns{columns...} { }
+            constexpr table_t(const detail::constexpr_string_base<TableNameT> &name, const column_base<ColumnT> & ... columns)
+                : TableT<fully_qualified_column_t<TableNameT, ColumnT>...>{fully_qualified_column_t<TableNameT, ColumnT>{__name, columns}...}, __name{name} { }
 
-            constexpr auto get_name() const { return name; }
-            constexpr auto get_columns() const { return columns; }
+            constexpr auto get_name() const { return __name; }
 
         private:
-            const TableNameT name;
-            const column_set<Columns...> columns;
+            TableNameT __name;
         };
 
     }

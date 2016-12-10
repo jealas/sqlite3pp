@@ -9,19 +9,16 @@ namespace {
 
     using namespace sqlite3pp;
 
-    template <class T>
-    struct name_column_member {
-        T name;
+    template <class Name, class Age>
+    struct person_table {
+        Name name;
+        Age age;
     };
 
-    static constexpr auto name_column = column<name_column_member, column_type::TEXT>("name");
+    static constexpr auto age_column = column("age");
+    static constexpr auto name_column = column("name");
 
-    template <class T>
-    struct age_column_member {
-        T age;
-    };
-
-    static constexpr auto age_column = column<age_column_member, column_type::INTEGER>("age");
+    constexpr auto person = table<person_table>("person", name_column, age_column);
 }
 
 

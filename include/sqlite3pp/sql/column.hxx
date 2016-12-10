@@ -3,7 +3,6 @@
 #include <type_traits>
 
 #include "sqlite3pp/detail/constexpr_string.hxx"
-#include "sqlite3pp/sql/column_type.hxx"
 #include "sqlite3pp/sql/expressions.hxx"
 
 
@@ -13,7 +12,7 @@ namespace sqlite3pp {
         template<class T>
         struct column_base {
             constexpr auto get_name() const { return static_cast<const T *>(this)->get_name(); }
-            constexpr column_type get_type() const { return static_cast<const T *>(this)->get_type(); }
+            constexpr auto get_type() const { return static_cast<const T *>(this)->get_type(); }
             constexpr operator T&() { return *static_cast<T *>(this); }
             constexpr operator const T&() const { return *static_cast<const T *>(this); }
         };
@@ -126,21 +125,38 @@ namespace sqlite3pp {
             asc_expression_member<ColumnExpressionT> ASC{*this};
         };
 
-        template<template <class> class MemberT, column_type ColumnType, class NameType>
-        class column_t : public column_expression<column_t<MemberT, ColumnType, NameType>> {
+        template <class TableNameT, class ColumnT>
+        class fully_qualified_column_t : public column_expression<fully_qualified_column_t<TableNameT, ColumnT>> {
         public:
-            template <class T>
-            using member_t = MemberT<T>;
+            constexpr fully_qualified_column_t(const detail::constexpr_string_base<TableNameT> &table_name, const column_base<ColumnT> &column)
+                    : COLLATE{*this}, table_name{static_cast<const TableNameT &>(table_name)}, column{static_cast<const ColumnT &>(column)} {}
 
-            explicit constexpr column_t(const detail::constexpr_string_base<NameType> &name)
+            constexpr auto to_str() const {
+                return sql_strings::DOT.join(
+                    table_name,
+                    column.get_name()
+                );
+            }
+
+            collate_expression_member<fully_qualified_column_t<TableNameT, ColumnT>> COLLATE;
+
+        private:
+            const TableNameT &table_name;
+            const ColumnT &column;
+        };
+
+
+        template<class NameType>
+        class column_t : public column_expression<column_t<NameType>> {
+        public:
+            constexpr column_t(const detail::constexpr_string_base<NameType> &name)
                     : COLLATE{*this}, name{name} {}
 
             constexpr auto to_str() const { return name; }
 
             constexpr auto get_name() const { return name; }
-            constexpr column_type get_type() const { return ColumnType; }
 
-            collate_expression_member<column_t<MemberT, ColumnType, NameType>> COLLATE;
+            collate_expression_member<column_t<NameType>> COLLATE;
 
         private:
             NameType name;

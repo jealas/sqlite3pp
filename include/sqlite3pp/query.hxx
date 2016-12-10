@@ -14,64 +14,68 @@ namespace { using namespace sqlite3pp::sql; }
 
 namespace sqlite3pp {
 
-        // Data types.
-        static constexpr integer_type INTEGER{};
-        static constexpr int_type INT{};
+    // Data types.
+    static constexpr integer_type INTEGER{};
+    static constexpr int_type INT{};
+    static constexpr tinyint_type TINYINT{};
+    static constexpr smallint_type SMALLINT{};
+    static constexpr mediumint_type MEDIUMINT{};
+    static constexpr bigint_type BIGINT{};
 
-        static constexpr real_type REAL{};
-        static constexpr double_type DOUBLE{};
-        static constexpr float_type FLOAT{};
+    static constexpr real_type REAL{};
+    static constexpr double_type DOUBLE{};
+    static constexpr float_type FLOAT{};
 
-        static constexpr text_type TEXT{};
-        static constexpr char_type CHAR{};
-        static constexpr clob_type CLOB{};
-        static constexpr varchar_type VARCHAR{};
+    static constexpr text_type TEXT{};
+    static constexpr char_type CHAR{};
+    static constexpr clob_type CLOB{};
+    static constexpr varchar_type VARCHAR{};
 
-        static constexpr blob_type BLOB{};
+    static constexpr blob_type BLOB{};
 
-        static constexpr numeric_type NUMERIC{};
-        static constexpr decimal_type DECIMAL{};
-        static constexpr boolean_type BOOLEAN{};
-        static constexpr date_type DATE{};
-        static constexpr datetime_type DATETIME{};
+    static constexpr numeric_type NUMERIC{};
+    static constexpr decimal_type DECIMAL{};
+    static constexpr boolean_type BOOLEAN{};
+    static constexpr date_type DATE{};
+    static constexpr datetime_type DATETIME{};
 
-        // Literal expressions.
-        static constexpr bind_parameter _{};
-        static constexpr current_time_expression CURRENT_TIME{};
-        static constexpr current_date_expression CURRENT_DATE{};
-        static constexpr current_timestamp_expression CURRENT_TIMESTAMP{};
+    // Literal expressions.
+    static constexpr bind_parameter _{};
+    static constexpr current_time_expression CURRENT_TIME{};
+    static constexpr current_date_expression CURRENT_DATE{};
+    static constexpr current_timestamp_expression CURRENT_TIMESTAMP{};
 
-#ifdef NULL
-#undef NULL
-#endif
-        static constexpr null_expression NULL{};
+    #ifdef NULL
+    #undef NULL
+    #endif
+    static constexpr null_expression NULL{};
 
-        // Expression operators.
-        using namespace sqlite3pp::sql::operators;
+    // Expression operators.
+    using namespace sqlite3pp::sql::operators;
 
-        // Table and Column APIs.
-        template <template <class> class MemberT, column_type ColumnType, std::size_t NameLength>
-        constexpr auto column(const char (&name)[NameLength]) {
-            auto name_str = detail::make_constexpr_string(name);
+    // Table and Column APIs.
+    template <std::size_t NameLength>
+    constexpr auto column(const char (&name)[NameLength]) {
+        auto name_str = detail::make_constexpr_string(name);
 
-            return column_t<MemberT, ColumnType, decltype(name_str)>{name_str};
-        }
+        return column_t<decltype(name_str)>{name_str};
+    }
 
-        template<std::size_t TableNameLength, class ... ColumnTypes>
-        constexpr auto table(const char (&name)[TableNameLength], const column_base<ColumnTypes> &... columns) {
-            auto name_str = detail::make_constexpr_string(name);
+    template<template <class ...> class TableT, std::size_t TableNameLength, class ... ColumnT>
+    constexpr auto table(const char (&name)[TableNameLength], const column_base<ColumnT> & ... columns) {
+        auto name_str = detail::make_constexpr_string(name);
 
-            return table_t<decltype(name_str), ColumnTypes...>{name_str, columns...};
-        }
+        return table_t<TableT, decltype(name_str), ColumnT...>{name_str, columns...};
+    }
 
-        // Query API.
-        static constexpr all_t ALL{};
+    // Query API.
+    static constexpr all_t ALL{};
 
-        static constexpr select_member SELECT{};
+    static constexpr select_member SELECT{};
 
-        static constexpr collate_byte BYTE{};
-        static constexpr collate_nocase NOCASE{};
-        static constexpr collate_rtrim RTRIM{};
+    static constexpr collate_byte BYTE{};
+    static constexpr collate_nocase NOCASE{};
+    static constexpr collate_rtrim RTRIM{};
 
 }
 

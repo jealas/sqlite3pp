@@ -1,6 +1,11 @@
 #pragma once
 
+#include <type_traits>
+
 #include "sqlite3pp/sql/sql_strings.hxx"
+#include "sqlite3pp/sql/table.hxx"
+#include "sqlite3pp/sql/column.hxx"
+#include "sqlite3pp/sql/expressions.hxx"
 
 
 namespace sqlite3pp {
@@ -160,8 +165,109 @@ namespace sqlite3pp {
             const InsertSyntaxT &insert;
         };
 
+        template <class InsertSyntaxT, class ... ExpressionT>
+        class insert_into_values : public insert_base<insert_into_values<InsertSyntaxT, ExpressionT...>> {
+        public:
+            constexpr insert_into_values(const insert_syntax_base<InsertSyntaxT> &insert, const expression<ExpressionT> & ... expressions)
+                : insert{static_cast<const InsertSyntaxT &>(insert)}, expressions{static_cast<const ExpressionT &>(expressions)...} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                    insert.to_str(),
+                    join_constexpr_strings(sql_strings::OPEN_PARENTHESIS,
+                                           make_expressions_str(std::make_index_sequence<sizeof...(ExpressionT)>()),
+                                           sql_strings::CLOSE_PARENTHESIS)
+                );
+            }
+
+        private:
+            template <std::size_t ... Indexes>
+            constexpr auto make_expressions_str(std::index_sequence<Indexes...>) const {
+                return sql_strings::COMMA.join(std::get<Indexes>(expressions).to_str()...);
+            }
+
+        private:
+            const InsertSyntaxT &insert;
+            std::tuple<ExpressionT...> expressions;
+        };
+
         template <class InsertSyntaxT>
-        class insert_into_member {
+        class insert_into_values_member : public insert_syntax_base<insert_into_values_member<InsertSyntaxT>> {
+        public:
+            constexpr insert_into_values_member(const insert_syntax_base<InsertSyntaxT> &insert)
+                : insert{static_cast<const InsertSyntaxT &>(insert)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                    insert.to_str(),
+                    sql_strings::VALUES
+                );
+            }
+
+            template <class ... ExpressionT>
+            constexpr auto operator()(const expression<ExpressionT> & ... expressions) const {
+                return insert_into_values<insert_into_values_member<InsertSyntaxT>, ExpressionT...>{*this, expressions...};
+            }
+
+        private:
+            const InsertSyntaxT &insert;
+        };
+
+        template <class InsertSyntaxT, class ... ColumnT>
+        class insert_into_columns : public insert_syntax_base<insert_into_columns<InsertSyntaxT, ColumnT...>> {
+        public:
+            constexpr insert_into_columns(const insert_syntax_base<InsertSyntaxT> &insert, const column_base<ColumnT> & ... columns)
+                : VALUES{*this}, insert{static_cast<const InsertSyntaxT &>(insert)}, columns{static_cast<const ColumnT &>(columns)...} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                        insert.to_str(),
+                        join_constexpr_strings(sql_strings::OPEN_PARENTHESIS,
+                                               make_columns_str(std::make_index_sequence<sizeof...(ColumnT)>()),
+                                               sql_strings::CLOSE_PARENTHESIS)
+                );
+            }
+
+            insert_into_values_member<insert_into_columns<InsertSyntaxT, ColumnT...>> VALUES;
+
+        private:
+            template <std::size_t ... Indexes>
+            constexpr auto make_columns_str(std::index_sequence<Indexes...>) const {
+                return sql_strings::COMMA.join(std::get<Indexes>(columns).to_str()...);
+            }
+
+        private:
+            const InsertSyntaxT &insert;
+            std::tuple<const ColumnT & ...> columns;
+        };
+
+        template <class InsertSyntaxT, class TableT>
+        class insert_into_table : public insert_syntax_base<insert_into_table<InsertSyntaxT, TableT>> {
+        public:
+            constexpr insert_into_table(const insert_syntax_base<InsertSyntaxT> &insert, const table_base<TableT> &table)
+                : VALUES{*this}, insert{static_cast<const InsertSyntaxT &>(insert)}, table{static_cast<const TableT &>(table)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                    insert.to_str(),
+                    table.get_name()
+                );
+            }
+
+            template <class ... ColumnT>
+            constexpr auto operator()(const column_base<ColumnT> & ... columns) const {
+                return insert_into_columns<insert_into_table<InsertSyntaxT, TableT>, ColumnT...>{*this, columns...};
+            }
+
+            insert_into_values_member<insert_into_table<InsertSyntaxT, TableT>> VALUES;
+
+        private:
+            const InsertSyntaxT &insert;
+            const TableT &table;
+        };
+
+        template <class InsertSyntaxT>
+        class insert_into_member : public insert_syntax_base<insert_into_member<InsertSyntaxT>> {
         public:
             constexpr insert_into_member(const insert_syntax_base<InsertSyntaxT> &insert)
                 : insert{static_cast<const InsertSyntaxT &>(insert)} {}
@@ -171,6 +277,11 @@ namespace sqlite3pp {
                     insert.to_str(),
                     sql_strings::INTO
                 );
+            }
+
+            template <class TableT>
+            constexpr auto operator()(const table_base<TableT> &table) const {
+                return insert_into_table<insert_into_member<InsertSyntaxT>, TableT>{*this, table};
             }
 
         private:

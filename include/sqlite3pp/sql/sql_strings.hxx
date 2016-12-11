@@ -88,6 +88,7 @@ namespace sqlite3pp {
             static constexpr auto ABORT = make_constexpr_string("ABORT");
             static constexpr auto FAIL = make_constexpr_string("FAIL");
             static constexpr auto IGNORE = make_constexpr_string("IGNORE");
+            static constexpr auto VALUES = make_constexpr_string("VALUES");
 
             static constexpr auto NULL_STR = make_constexpr_string("NULL");
 

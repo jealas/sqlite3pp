@@ -213,11 +213,63 @@ namespace sqlite3pp {
             const InsertSyntaxT &insert;
         };
 
+        template <class InsertSyntaxT>
+        class insert_into_default_values : public insert_base<insert_into_default_values<InsertSyntaxT>> {
+        public:
+            constexpr insert_into_default_values(const insert_syntax_base<InsertSyntaxT> &insert)
+                : insert{static_cast<const InsertSyntaxT &>(insert)} {}
+
+            constexpr auto serialize() const { return insert.to_str(); }
+
+        private:
+            const InsertSyntaxT &insert;
+        };
+
+        template <class InsertSyntaxT>
+        class insert_into_default_values_member : public insert_syntax_base<insert_into_default_values_member<InsertSyntaxT>> {
+        public:
+            constexpr insert_into_default_values_member(const insert_syntax_base<InsertSyntaxT> &insert)
+                : insert{static_cast<const InsertSyntaxT &>(insert)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                    insert.to_str(),
+                    sql_strings::VALUES
+                );
+            }
+
+            constexpr auto operator()() const {
+                return insert_into_default_values<insert_into_default_values_member<InsertSyntaxT>>{*this};
+            }
+
+        private:
+            const InsertSyntaxT &insert;
+        };
+
+        template <class InsertSyntaxT>
+        class insert_into_default_member : public insert_syntax_base<insert_into_default_member<InsertSyntaxT>> {
+        public:
+            constexpr insert_into_default_member(const insert_syntax_base<InsertSyntaxT> &insert)
+                : VALUES{*this}, insert{static_cast<const InsertSyntaxT &>(insert)} {}
+
+            constexpr auto to_str() const {
+                return sql_strings::SPACE.join(
+                    insert.to_str(),
+                    sql_strings::DEFAULT
+                );
+            }
+
+            insert_into_default_values_member<insert_into_default_member<InsertSyntaxT>> VALUES;
+
+        private:
+            const InsertSyntaxT &insert;
+        };
+
         template <class InsertSyntaxT, class ... ColumnT>
         class insert_into_columns : public insert_syntax_base<insert_into_columns<InsertSyntaxT, ColumnT...>> {
         public:
             constexpr insert_into_columns(const insert_syntax_base<InsertSyntaxT> &insert, const column_base<ColumnT> & ... columns)
-                : VALUES{*this}, insert{static_cast<const InsertSyntaxT &>(insert)}, columns{static_cast<const ColumnT &>(columns)...} {}
+                : VALUES{*this}, DEFAULT{*this}, insert{static_cast<const InsertSyntaxT &>(insert)}, columns{static_cast<const ColumnT &>(columns)...} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -229,6 +281,7 @@ namespace sqlite3pp {
             }
 
             insert_into_values_member<insert_into_columns<InsertSyntaxT, ColumnT...>> VALUES;
+            insert_into_default_member<insert_into_columns<InsertSyntaxT, ColumnT...>> DEFAULT;
 
         private:
             template <std::size_t ... Indexes>
@@ -245,7 +298,7 @@ namespace sqlite3pp {
         class insert_into_table : public insert_syntax_base<insert_into_table<InsertSyntaxT, TableT>> {
         public:
             constexpr insert_into_table(const insert_syntax_base<InsertSyntaxT> &insert, const table_base<TableT> &table)
-                : VALUES{*this}, insert{static_cast<const InsertSyntaxT &>(insert)}, table{static_cast<const TableT &>(table)} {}
+                : VALUES{*this}, DEFAULT{*this}, insert{static_cast<const InsertSyntaxT &>(insert)}, table{static_cast<const TableT &>(table)} {}
 
             constexpr auto to_str() const {
                 return sql_strings::SPACE.join(
@@ -260,6 +313,7 @@ namespace sqlite3pp {
             }
 
             insert_into_values_member<insert_into_table<InsertSyntaxT, TableT>> VALUES;
+            insert_into_default_member<insert_into_table<InsertSyntaxT, TableT>> DEFAULT;
 
         private:
             const InsertSyntaxT &insert;

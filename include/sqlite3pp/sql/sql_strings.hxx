@@ -81,6 +81,16 @@ namespace sqlite3pp {
             static constexpr auto NOCASE = make_constexpr_string("NOCASE");
             static constexpr auto RTRIM = make_constexpr_string("RTRIM");
 
+            static constexpr auto INSERT = make_constexpr_string("INSERT");
+            static constexpr auto INTO = make_constexpr_string("INTO");
+            static constexpr auto REPLACE = make_constexpr_string("REPLACE");
+            static constexpr auto ROLLBACK = make_constexpr_string("ROLLBACK");
+            static constexpr auto ABORT = make_constexpr_string("ABORT");
+            static constexpr auto FAIL = make_constexpr_string("FAIL");
+            static constexpr auto IGNORE = make_constexpr_string("IGNORE");
+            static constexpr auto VALUES = make_constexpr_string("VALUES");
+            static constexpr auto DEFAULT = make_constexpr_string("DEFAULT");
+
             static constexpr auto NULL_STR = make_constexpr_string("NULL");
 
             static constexpr auto INTEGER = make_constexpr_string("INTEGER");

@@ -9,6 +9,7 @@
 #include "sqlite3pp/detail/constexpr_string.hxx"
 #include "sqlite3pp/sql/select_statement.hxx"
 #include "sqlite3pp/sql/insert_statement.hxx"
+#include "sqlite3pp/sql/column_operators.hxx"
 
 namespace { using namespace sqlite3pp::sql; }
 

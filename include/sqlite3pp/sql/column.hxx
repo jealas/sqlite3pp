@@ -195,11 +195,7 @@ namespace sqlite3pp {
         class column_comma_list : public column_comma_list_base<column_comma_list<ColumnT...>> {
         public:
             constexpr column_comma_list(const column_base<ColumnT> & ... columns)
-                : columns{columns...} {}
-
-            template <class ... ColumnTs, class RightColumnT, std::size_t ... Index>
-            constexpr column_comma_list(const column_comma_list_base<ColumnTs...> &columns, const column_base<RightColumnT> &column, std::index_sequence<Index...>)
-                : columns{std::get<Index>(columns.get_columns())..., column} {}
+                : columns{static_cast<const ColumnT &>(columns)...} {}
 
             constexpr auto to_str() const {
                 return make_columns_str(std::make_index_sequence<sizeof...(ColumnT)>());
@@ -222,7 +218,7 @@ namespace sqlite3pp {
             }
 
         private:
-            std::tuple<const column_base<ColumnT> & ...> columns;
+            std::tuple<const ColumnT & ...> columns;
         };
 
         template <class ColumnT, class ExpressionT>

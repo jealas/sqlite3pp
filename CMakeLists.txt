@@ -7,7 +7,7 @@ set(SQLITE3PP_SOURCE_FILES
         src/sqlite3/connection.cxx
         src/sqlite3/error.cxx
         src/sqlite3/progress_handler.cxx
-        include/sqlite3pp/sql/insert_statement.hxx)
+        include/sqlite3pp/sql/insert_statement.hxx include/sqlite3pp/sql/create_table_statement.hxx include/sqlite3pp/sql/create_statement.hxx include/sqlite3pp/sql/column_definition_statement.hxx)
 
 add_library(sqlite3pp SHARED ${SQLITE3PP_SOURCE_FILES})
 

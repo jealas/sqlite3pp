@@ -10,6 +10,7 @@
 #include "sqlite3pp/sql/select_statement.hxx"
 #include "sqlite3pp/sql/insert_statement.hxx"
 #include "sqlite3pp/sql/column_operators.hxx"
+#include "sqlite3pp/sql/update_statement.hxx"
 
 namespace { using namespace sqlite3pp::sql; }
 
@@ -76,6 +77,7 @@ namespace sqlite3pp {
 
     static constexpr select_member SELECT{};
     static constexpr insert_member INSERT{};
+    static constexpr update_member UPDATE{};
 
     static constexpr collate_byte BYTE{};
     static constexpr collate_nocase NOCASE{};

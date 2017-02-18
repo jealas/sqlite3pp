@@ -17,13 +17,28 @@ namespace sqlite3pp {
             constexpr auto to_str() const { return static_cast<const UpdateSyntaxT *>(this)->to_str(); }
         };
 
+        template <class UpdateSyntaxT>
+        class update_set_syntax : public update_syntax<update_set_syntax<UpdateSyntaxT>> {
+        public:
+            constexpr update_set_syntax(const update_syntax<UpdateSyntaxT> &update_syntax)
+                : update_syntax{update_syntax} {}
+
+            constexpr auto to_str() const { return sql_strings::SPACE.join(update_syntax.to_str(), sql_strings::SET); }
+
+        private:
+            const update_syntax<UpdateSyntaxT> &update_syntax;
+        };
+
         template <class UpdateSyntaxT, class TableT>
         class update_with_table : public update_syntax<update_with_table<UpdateSyntaxT, TableT>> {
         public:
             constexpr update_with_table(const update_syntax<UpdateSyntaxT> &update_syntax, const table_base<TableT> &table)
-                : update_syntax{update_syntax}, table{table} {}
+                : update_syntax{update_syntax}, table{table}, SET{*this} {}
 
             constexpr auto to_str() const { return sql_strings::SPACE.join(update_syntax.to_str(), table.get_name()); }
+
+        public:
+            update_set_syntax<update_with_table<UpdateSyntaxT, TableT>> SET;
 
         private:
             const update_syntax<UpdateSyntaxT> &update_syntax;

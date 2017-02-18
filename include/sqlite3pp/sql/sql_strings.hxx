@@ -92,6 +92,7 @@ namespace sqlite3pp {
             static constexpr auto DEFAULT = make_constexpr_string("DEFAULT");
 
             static constexpr auto UPDATE = make_constexpr_string("UPDATE");
+            static constexpr auto SET = make_constexpr_string("SET");
 
             static constexpr auto NULL_STR = make_constexpr_string("NULL");
 

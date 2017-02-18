@@ -72,8 +72,6 @@ TEST_CASE("UPDATE table syntax works", "[test-update-statement]") {
     REQUIRE(std::equal(update_str.begin(), update_str.end(), "UPDATE person"));
 }
 
-//
-
 TEST_CASE("UPDATE OR ROLLBACK table syntax works", "[test-update-statement]") {
     constexpr auto update_str = UPDATE.OR.ROLLBACK(person).to_str();
 
@@ -102,4 +100,40 @@ TEST_CASE("UPDATE OR IGNORE table syntax works", "[test-update-statement]") {
     constexpr auto update_str = UPDATE.OR.IGNORE(person).to_str();
 
     REQUIRE(std::equal(update_str.begin(), update_str.end(), "UPDATE OR IGNORE person"));
+}
+
+TEST_CASE("UPDATE table SET syntax works", "[test-update-statement]") {
+    constexpr auto update_str = UPDATE(person).SET.to_str();
+
+    REQUIRE(std::equal(update_str.begin(), update_str.end(), "UPDATE person SET"));
+}
+
+TEST_CASE("UPDATE OR ROLLBACK table SET syntax works", "[test-update-statement]") {
+    constexpr auto update_str = UPDATE.OR.ROLLBACK(person).SET.to_str();
+
+    REQUIRE(std::equal(update_str.begin(), update_str.end(), "UPDATE OR ROLLBACK person SET"));
+}
+
+TEST_CASE("UPDATE OR ABORT table SET syntax works", "[test-update-statement]") {
+    constexpr auto update_str = UPDATE.OR.ABORT(person).SET.to_str();
+
+    REQUIRE(std::equal(update_str.begin(), update_str.end(), "UPDATE OR ABORT person SET"));
+}
+
+TEST_CASE("UPDATE OR REPLACE table SET syntax works", "[test-update-statement]") {
+    constexpr auto update_str = UPDATE.OR.REPLACE(person).SET.to_str();
+
+    REQUIRE(std::equal(update_str.begin(), update_str.end(), "UPDATE OR REPLACE person SET"));
+}
+
+TEST_CASE("UPDATE OR FAIL table SET syntax works", "[test-update-statement]") {
+    constexpr auto update_str = UPDATE.OR.FAIL(person).SET.to_str();
+
+    REQUIRE(std::equal(update_str.begin(), update_str.end(), "UPDATE OR FAIL person SET"));
+}
+
+TEST_CASE("UPDATE OR IGNORE table SET syntax works", "[test-update-statement]") {
+    constexpr auto update_str = UPDATE.OR.IGNORE(person).SET.to_str();
+
+    REQUIRE(std::equal(update_str.begin(), update_str.end(), "UPDATE OR IGNORE person SET"));
 }
